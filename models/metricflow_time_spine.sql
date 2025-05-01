@@ -1,6 +1,7 @@
 {{
    config(
        materialized = 'table',
+       snowflake_warehouse='TRANSFORMING'
    )
 }}
 with days as (
