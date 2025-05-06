@@ -1,3 +1,7 @@
+{{ config(
+    materialized='incremental'
+) }}
+
 select
     id as payment_id,
     orderid as order_id,
