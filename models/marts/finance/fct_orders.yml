@@ -2,15 +2,15 @@ models:
   - name: fct_orders
     columns:
       - name: order_id
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: customer_id
-        tests:
+        data_tests:
           - not_null
       - name: order_date
-        tests:
+        data_tests:
           - not_null
       - name: amount
-        tests:
+        data_tests:
           - not_null

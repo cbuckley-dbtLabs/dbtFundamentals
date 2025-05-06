@@ -41,6 +41,4 @@ models:
     staging:
       +materialized: view
     marts:
-      +materialized: table
-    marketing:
       +materialized: incremental
