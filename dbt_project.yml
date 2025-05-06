@@ -42,3 +42,5 @@ models:
       +materialized: view
     marts:
       +materialized: table
+    marketing:
+      +materialized: incremental
