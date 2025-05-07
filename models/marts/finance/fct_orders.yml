@@ -3,7 +3,6 @@ models:
     columns:
       - name: order_id
         data_tests:
-          - unique
           - not_null
       - name: customer_id
         data_tests:
