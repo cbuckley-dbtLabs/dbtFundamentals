@@ -1,0 +1,21 @@
+version: 2
+models:
+- name: int_payments_pivoted_to_orders
+  description: This model aggregates payment amounts by order, pivoting on different
+    payment methods such as bank transfer, credit card, coupon, and gift card. It
+    calculates the total successful payment amount for each order, providing a comprehensive
+    view of payment distribution across different methods.
+  columns:
+  - name: order_id
+    description: A unique identifier for each order.
+  - name: bank_transfer_amount
+    description: The total amount paid via bank transfer for the order.
+  - name: credit_card_amount
+    description: The total amount paid via credit card for the order.
+  - name: coupon_amount
+    description: The total amount paid using coupons for the order.
+  - name: gift_card_amount
+    description: The total amount paid using gift cards for the order.
+  - name: total_amount
+    description: The total successful payment amount for the order across all payment
+      methods.
