@@ -1,0 +1,21 @@
+version: 2
+models:
+- name: orders_by_customersql
+  description: This model aggregates customer order data from the Jaffle Shop app,
+    providing insights into customer spending behavior. It calculates the maximum,
+    average, and count of order amounts for each customer, along with the date of
+    their first order. The data is ordered by average spending in descending order
+    to highlight top-spending customers.
+  columns:
+  - name: first_name
+    description: The first name of the customer.
+  - name: last_name
+    description: The last name of the customer.
+  - name: max_amount
+    description: The maximum amount spent by the customer on a single order.
+  - name: avg_amount
+    description: The average amount spent by the customer across all orders.
+  - name: first_order
+    description: The date of the customer's first order.
+  - name: count_created_at
+    description: The total number of orders placed by the customer.
