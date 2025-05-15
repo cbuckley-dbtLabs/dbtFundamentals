@@ -9,13 +9,25 @@ models:
   columns:
   - name: first_name
     description: The first name of the customer.
+    data_tests:
+      - not_null
   - name: last_name
     description: The last name of the customer.
+    data_tests:
+      - not_null
   - name: max_amount
     description: The maximum amount spent by the customer on a single order.
+    data_tests:
+      - not_null
   - name: avg_amount
     description: The average amount spent by the customer across all orders.
+    data_tests:
+      - not_null
   - name: first_order
     description: The date of the customer's first order.
+    data_tests:
+      - not_null
   - name: count_created_at
     description: The total number of orders placed by the customer.
+    data_tests:
+      - not_null
