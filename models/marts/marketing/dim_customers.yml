@@ -11,6 +11,7 @@ models:
     description: A unique identifier for each customer.
     data_tests:
       - not_null
+      - unique
   - name: first_name
     description: The first name of the customer.
   - name: last_name
