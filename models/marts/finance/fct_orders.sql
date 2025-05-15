@@ -13,6 +13,7 @@ order_payments as (
 
 ),
 
+
 combined_info as (
 
     select
