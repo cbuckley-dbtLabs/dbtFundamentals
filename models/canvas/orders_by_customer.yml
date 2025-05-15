@@ -1,6 +1,6 @@
 version: 2
 models:
-- name: orders_by_customersql
+- name: orders_by_customer
   description: This model aggregates customer order data from the Jaffle Shop app,
     providing insights into customer spending behavior. It calculates the maximum,
     average, and count of order amounts for each customer, along with the date of
