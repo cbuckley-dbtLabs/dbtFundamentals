@@ -25,44 +25,43 @@ semantic_models:
   - name: max_amount
     description: The maximum amount spent by the customer on a single order.
     agg: max
-    create_metric: true
   - name: avg_amount
     description: The average amount spent by the customer across all orders.
     agg: average
-    create_metric: true
+
   - name: count_orders
     description: The total number of orders placed by the customer.
     agg: count
-    create_metric: true
+
     expr: count_created_at
   - name: count_customer
     agg: count
-    create_metric: true
+
     expr: first_name || ' ' || last_name
 
 metrics:
-- name: max_amount_spent
+- name: max_amount
   description: The maximum amount spent by the customer on a single order.
   label: Maximum Amount
   type: simple
   type_params:
     measure:
       name: max_amount
-- name: avg_amount_spent
+- name: avg_amount
   description: The average amount spent by the customer across all orders.
   label: Average Amount
   type: simple
   type_params:
     measure:
       name: avg_amount
-- name: count_orders_canvas
+- name: count_orders
   description: The total number of orders placed by the customer.
   label: Count of Orders
   type: simple
   type_params:
     measure:
       name: count_orders
-- name: count_customer_canvas
+- name: count_customer
   description: The total number of customers.
   label: Count of Customers
   type: simple
