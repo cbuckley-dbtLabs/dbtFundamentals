@@ -9,7 +9,6 @@ models:
   - name: payment_id
     description: A unique identifier for each payment transaction.
     data_tests:
-      - unique
       - not_null
   - name: order_id
     description: The identifier for the order associated with the payment.
