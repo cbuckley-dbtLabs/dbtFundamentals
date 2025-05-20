@@ -1,5 +1,7 @@
 {{ config(
-    materialized='incremental'
+    materialized='incremental',
+    unique_key='payment_id',
+    on_schema_change='sync_all_columns'
 ) }}
 
 select
