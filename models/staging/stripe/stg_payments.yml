@@ -8,8 +8,13 @@ models:
   columns:
   - name: payment_id
     description: A unique identifier for each payment transaction.
+    data_tests:
+      - unique
+      - not_null
   - name: order_id
     description: The identifier for the order associated with the payment.
+    data_tests:
+      - not_null
   - name: payment_method
     description: The method used to make the payment, such as credit card or PayPal.
   - name: status
