@@ -19,8 +19,8 @@ sources:
               - unique
               - not_null
         loaded_at_field: _etl_loaded_at
-        config:
+        # config:
       
-          freshness:
-            warn_after: { count: 90, period: day }
-            error_after: { count: 365, period: day }
+        #   freshness:
+        #     warn_after: { count: 90, period: day }
+        #     error_after: { count: 365, period: day }
