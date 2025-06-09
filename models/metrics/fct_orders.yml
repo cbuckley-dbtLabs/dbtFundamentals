@@ -72,14 +72,6 @@ metrics:
       denominator: 
         name: order_count
   # Cumulative type metrics
-  - name: "cumulative_order_amount_mtd"
-    label: "cumulative_order_amount_mtd"
-    description: "The month to date value of all orders"
-    type: cumulative
-    type_params:
-      measure:
-        name: order_total
-      grain_to_date: month
   # Derived metric
   - name: "pct_of_orders_that_are_large"
     label: "pct_of_orders_that_are_large"

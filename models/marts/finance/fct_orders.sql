@@ -1,41 +1,32 @@
-{{ config(
-    materialized='incremental'
-) }}
+-- orders.sql
+with
 
-with orders as  (
-   select * from {{ ref('stg_jaffle_shop__orders' )}}
+orders as  (
+
+    select * from {{ ref('stg_jaffle_shop__orders' )}}
+
 ),
-
-
-payments as (
-   select * from {{ ref('stg_payments') }}
-),
-
 
 order_payments as (
-   select
-       order_id,
-       sum(case when status = 'success' then amount end) as amount
 
+    select * from {{ ref('int_payments_pivoted_to_orders') }}
 
-   from payments
-   group by 1
 ),
 
 
-final as (
+combined_info as (
 
+    select
+        orders.order_id,
+        orders.customer_id,
+        orders.order_date,
+        coalesce(order_payments.total_amount, 0) as amount,
+        coalesce(order_payments.gift_card_amount, 0) as gift_card_amount
 
-   select
-       orders.order_id,
-       orders.customer_id,
-       orders.order_date,
-       coalesce(order_payments.amount, 0) as amount
+    from orders
 
+    left join order_payments on orders.order_id = order_payments.order_id
 
-   from orders
-   left join order_payments using (order_id)
 )
 
-
-select * from final
+select * from combined_info

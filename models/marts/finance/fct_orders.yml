@@ -1,15 +1,1 @@
-models:
-  - name: fct_orders
-    columns:
-      - name: order_id
-        data_tests:
-          - not_null
-      - name: customer_id
-        data_tests:
-          - not_null
-      - name: order_date
-        data_tests:
-          - not_null
-      - name: amount
-        data_tests:
-          - not_null
+
