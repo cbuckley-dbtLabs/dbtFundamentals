@@ -15,13 +15,13 @@ WITH stg_jaffle_shop__customers AS (
     *
   FROM stg_jaffle_shop__orders
   JOIN stg_stripe__payments
-    ON stg_jaffle_shop__orders.ORDER_ID = stg_stripe__payments.ORDER_ID
+    USING (ORDER_ID)
 ), join_2 AS (
   SELECT
     *
   FROM join_1
   JOIN stg_jaffle_shop__customers
-    ON join_1.CUSTOMER_ID = stg_jaffle_shop__customers.CUSTOMER_ID
+    USING (CUSTOMER_ID)
 ), aggregate_1 AS (
   SELECT
     FIRST_NAME,
