@@ -18,7 +18,7 @@ sources:
             tests:
               - unique
               - not_null
-        loaded_at_field: _etl_loaded_at
+        # loaded_at_field: _etl_loaded_at
         # config:
       
         #   freshness:
