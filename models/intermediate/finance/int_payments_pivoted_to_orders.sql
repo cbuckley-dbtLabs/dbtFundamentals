@@ -1,35 +1,40 @@
-{%- set payment_methods = ['bank_transfer','credit_card','coupon','gift_card'] -%}
-
-with
-
-payments_info as (
-
-   select * from {{ ref('stg_stripe__payments') }}
-
-),
-
-pivot_and_aggregate_payments_to_order_grain as ( 
-
-   select
-      order_id,
-      {% for payment_method in payment_methods -%}
-
-         sum(
-            case
-               when payment_method = '{{ payment_method }}' and
-                    status = 'success'
-               then amount
-               else 0
-            end
-         ) as {{ payment_method }}_amount,
-
-      {%- endfor %}
-      sum(case when status = 'success' then amount end) as total_amount
-
-   from payments_info
-
-   group by 1
-
+WITH stg_stripe__payments AS (
+  SELECT
+    *
+  FROM ANALYTICS.DBT_CBUCKLEY.STG_STRIPE__PAYMENTS
+), formula_7591 AS (
+  SELECT
+    *,
+    CASE
+      WHEN PAYMENT_METHOD = 'bank_transfer' AND STATUS = 'success'
+      THEN AMOUNT
+      ELSE 0
+    END AS BANK_TRANSFER_AMOUNT,
+    CASE
+      WHEN PAYMENT_METHOD = 'credit_card' AND STATUS = 'success'
+      THEN AMOUNT
+      ELSE 0
+    END AS CREDIT_CARD_AMOUNT,
+    CASE WHEN PAYMENT_METHOD = 'coupon' AND STATUS = 'success' THEN AMOUNT ELSE 0 END AS COUPON_AMOUNT,
+    CASE WHEN PAYMENT_METHOD = 'gift_card' AND STATUS = 'success' THEN AMOUNT ELSE 0 END AS GIFT_CARD_AMOUNT,
+    CASE WHEN STATUS = 'success' THEN AMOUNT END AS TOTAL_AMOUNT
+  FROM stg_stripe__payments
+), aggregation_37e5 AS (
+  SELECT
+    ORDER_ID,
+    SUM(BANK_TRANSFER_AMOUNT) AS BANK_TRANSFER_AMOUNT,
+    SUM(CREDIT_CARD_AMOUNT) AS CREDIT_CARD_AMOUNT,
+    SUM(COUPON_AMOUNT) AS COUPON_AMOUNT,
+    SUM(GIFT_CARD_AMOUNT) AS GIFT_CARD_AMOUNT,
+    SUM(TOTAL_AMOUNT) AS TOTAL_AMOUNT
+  FROM formula_7591
+  GROUP BY
+    ORDER_ID
+), int_payments_pivoted_to_orders AS (
+  SELECT
+    *
+  FROM aggregation_37e5
 )
-
-select * from pivot_and_aggregate_payments_to_order_grain
+SELECT
+  *
+FROM int_payments_pivoted_to_orders
