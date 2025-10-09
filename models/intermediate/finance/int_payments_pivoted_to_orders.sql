@@ -8,7 +8,7 @@ payments_info as (
 
 ),
 
-pivot_and_aggregate_payments_to_order_grain as (
+pivot_and_aggregate_payments_to_order_grain as ( 
 
    select
       order_id,

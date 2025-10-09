@@ -18,5 +18,14 @@ sources:
             tests:
               - unique
               - not_null
+<<<<<<< HEAD
         config:
           loaded_at_field: _etl_loaded_at
+=======
+        # loaded_at_field: _etl_loaded_at
+        # config:
+      
+        #   freshness:
+        #     warn_after: { count: 90, period: day }
+        #     error_after: { count: 365, period: day }
+>>>>>>> 336ec269f4e928190e118ab323f3eb859ca2ea0c

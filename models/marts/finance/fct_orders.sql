@@ -7,7 +7,7 @@ orders as  (
 
 ),
 
-order_payments as (
+order_payments as ( 
 
     select * from {{ ref('int_payments_pivoted_to_orders') }}
 
@@ -19,7 +19,7 @@ combined_info as (
     select
         orders.order_id,
         orders.customer_id,
-        orders.order_date,
+        orders.order_date, 
         coalesce(order_payments.total_amount, 0) as amount,
         coalesce(order_payments.gift_card_amount, 0) as gift_card_amount
 
