@@ -6,8 +6,8 @@ sources:
     schema: stripe
     tables:
       - name: payment
-        loaded_at_field: _batched_at
         config:
           freshness:
             warn_after: {count: 90, period: day}
             error_after: {count: 365, period: day}
+          loaded_at_field: _batched_at
