@@ -13,7 +13,6 @@ exposures:
     depends_on:
       - ref('fct_orders')
       - ref('dim_customers')
-      - metric('customers_with_orders')
 
     owner:
       name: Callum McData
@@ -30,7 +29,6 @@ exposures:
     depends_on:
       - ref('fct_orders')
       - ref('dim_customers')
-      - metric('customers_with_orders')
 
     owner:
       name: Robert Paulson
