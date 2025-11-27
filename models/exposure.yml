@@ -8,7 +8,7 @@ exposures:
     maturity: high
     url: https://bi.tool/dashboards/1
     description: >
-      Report of jaffles by the week!
+      Report of jaffles sold by the week!
 
     depends_on:
       - ref('fct_orders')
