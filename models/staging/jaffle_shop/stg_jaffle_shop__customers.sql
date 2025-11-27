@@ -3,5 +3,5 @@ select
     first_name,
     last_name,
     email,
-    value,
+    value
 from {{ source('jaffle_shop', 'customers') }}
