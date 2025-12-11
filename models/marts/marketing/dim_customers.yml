@@ -1,26 +1,51 @@
 version: 2
 models:
-- name: dim_customers
-  description: This model consolidates customer data from various sources to provide
-    a comprehensive view of customer activity. It includes information on the first
-    and most recent order dates, the total number of orders, and the lifetime value
-    of each customer. This model is useful for analyzing customer behavior and value
-    over time.
-  columns:
-  - name: customer_id
-    description: A unique identifier for each customer.
-    data_tests:
-      - not_null
-      - unique
-  - name: first_name
-    description: The first name of the customer.
-  - name: last_name
-    description: The last name of the customer.
-  - name: first_order_date
-    description: The date when the customer placed their first order.
-  - name: most_recent_order_date
-    description: The date when the customer placed their most recent order.
-  - name: number_of_orders
-    description: The total number of orders placed by the customer.
-  - name: lifetime_value
-    description: The total monetary value of all orders placed by the customer.
+  - name: dim_customers
+    description: This model consolidates customer data from various sources to provide a comprehensive view of customer activity. It includes information on the first and most recent order dates, the total number of orders, and the lifetime value of each customer. This model is useful for analyzing customer behavior and value over time. This model consolidates customer data from various sources to provide a comprehensive view of customer activity. It includes information on the first and most recent order dates, the total number of orders, and the lifetime value of each customer. This model is useful for analyzing customer behavior and value over time.
+    columns:
+      - name: customer_id
+        description: A unique identifier for each customer.
+        data_tests:
+          - not_null
+          - unique
+        entity:
+          type: primary
+          name: customer
+      - name: first_name
+        description: The first name of the customer.
+        dimension:
+          type: categorical
+      - name: last_name
+        description: The last name of the customer.
+        dimension:
+          type: categorical
+      - name: first_order_date
+        description: The date when the customer placed their first order.
+        dimension:
+          type: time
+        granularity: day
+      - name: most_recent_order_date
+        description: The date when the customer placed their most recent order.
+        dimension:
+          type: time
+        granularity: day
+      - name: number_of_orders
+        description: The total number of orders placed by the customer.
+      - name: lifetime_value
+        description: The total monetary value of all orders placed by the customer.
+    semantic_model:
+      enabled: true
+    agg_time_dimension: first_order_date
+    metrics:
+      - name: number_of_orders
+        description: The total number of orders placed by the customer.
+        agg: sum
+        type: simple
+      - name: lifetime_value
+        description: The total monetary value of all orders placed by the customer.
+        agg: sum
+        type: simple
+      - name: count_customer
+        agg: count
+        expr: customer_id
+        type: simple
