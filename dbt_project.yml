@@ -34,7 +34,6 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 
 models:
-  +sql_header: "alter session set timezone = 'UTC';"
   jaffle_shop:
     # Applies to all files under models/example/
     staging:
