@@ -1,0 +1,46 @@
+models:
+  - name: fct_orders
+    description: This model provides a comprehensive view of customer orders, including details such as order ID, customer ID, order date, total amount, and gift card amount used. It is designed to facilitate analysis of order trends, customer purchasing behavior, and financial metrics related to sales. This model provides a comprehensive view of customer orders, including details such as order ID, customer ID, order date, total amount, and gift card amount used. It is designed to facilitate analysis of order trends, customer purchasing behavior, and financial metrics related to sales.
+    columns:
+      - name: order_id
+        description: A unique identifier for each order.
+        entity:
+          type: primary
+          name: order
+        dimension:
+          type: categorical
+          name: id
+      - name: customer_id
+        description: The unique identifier of the customer who placed the order.
+        entity:
+          type: foreign
+          name: customer
+        dimension:
+          type: categorical
+      - name: order_date
+        description: The date on which the order was placed.
+        dimension:
+          type: time
+          name: date
+        granularity: day
+      - name: amount
+        description: The total monetary value of the order.
+      - name: gift_card_amount
+        description: The portion of the order amount paid using a gift card.
+    semantic_model:
+      enabled: true
+    agg_time_dimension: date
+    metrics:
+      - name: total_amount
+        description: The total monetary value of the order.
+        agg: sum
+        expr: amount
+        type: simple
+      - name: gift_card_amount
+        description: The portion of the order amount paid using a gift card.
+        agg: sum
+        type: simple
+      - name: count_order
+        agg: count
+        expr: order_id
+        type: simple
