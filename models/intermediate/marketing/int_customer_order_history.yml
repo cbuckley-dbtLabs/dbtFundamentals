@@ -1,0 +1,31 @@
+models:
+  - name: int_customer_order_history
+    description: >
+      Order-level history enriched with window functions. Each row is one order,
+      with the customer's sequence number for that order and the number of days
+      since their previous order. Useful for retention and repeat-purchase analysis.
+    columns:
+      - name: order_id
+        description: Primary key for the order.
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        description: Foreign key to the customer dimension.
+        tests:
+          - not_null
+      - name: order_date
+        description: The date the order was placed.
+      - name: amount
+        description: Total revenue for the order.
+      - name: order_status
+        description: Current status of the order.
+      - name: order_number
+        description: >
+          The customer's nth order, ranked chronologically. 1 = first ever order.
+      - name: previous_order_date
+        description: The date of the customer's immediately preceding order. Null for first orders.
+      - name: days_since_previous_order
+        description: >
+          Number of days between this order and the customer's previous order.
+          Null for a customer's first order.

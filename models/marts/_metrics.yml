@@ -1,0 +1,18 @@
+metrics:
+  - name: revenue_per_customer
+    description: Average revenue generated per unique customer. Joins fct_orders and dim_customers via the customer entity.
+    label: Revenue per Customer
+    type: ratio
+    numerator:
+      name: total_amount
+    denominator:
+      name: count_customer
+
+  - name: orders_per_customer
+    description: Average number of orders placed per unique customer.
+    label: Orders per Customer
+    type: ratio
+    numerator:
+      name: count_order
+    denominator:
+      name: count_customer

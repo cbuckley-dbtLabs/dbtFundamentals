@@ -1,46 +1,89 @@
 models:
   - name: fct_orders
-    description: This model provides a comprehensive view of customer orders, including details such as order ID, customer ID, order date, total amount, and gift card amount used. It is designed to facilitate analysis of order trends, customer purchasing behavior, and financial metrics related to sales. This model provides a comprehensive view of customer orders, including details such as order ID, customer ID, order date, total amount, and gift card amount used. It is designed to facilitate analysis of order trends, customer purchasing behavior, and financial metrics related to sales.
+    description: >
+      Comprehensive view of customer orders including order ID, customer ID,
+      order date, status, total amount, gift card usage, and return flag.
+      The central table for order trends, customer purchasing behaviour, and revenue analysis.
+    semantic_model:
+      enabled: true
+    agg_time_dimension: order_date
     columns:
+      # Entities
       - name: order_id
         description: A unique identifier for each order.
         entity:
           type: primary
           name: order
-        dimension:
-          type: categorical
-          name: id
       - name: customer_id
         description: The unique identifier of the customer who placed the order.
         entity:
           type: foreign
           name: customer
-        dimension:
-          type: categorical
+      # Time dimension
       - name: order_date
         description: The date on which the order was placed.
+        granularity: day
         dimension:
           type: time
-          name: date
-        granularity: day
+      # Categorical dimensions
+      - name: order_status
+        description: The current status of the order (e.g. placed, shipped, completed, returned).
+        dimension:
+          type: categorical
+      # Measures
       - name: amount
         description: The total monetary value of the order.
       - name: gift_card_amount
         description: The portion of the order amount paid using a gift card.
-    semantic_model:
-      enabled: true
-    agg_time_dimension: date
+      - name: is_return
+        description: >
+          Flag indicating whether the order was returned or is pending return (1 = yes, 0 = no).
     metrics:
       - name: total_amount
-        description: The total monetary value of the order.
+        description: The total monetary value of all orders.
+        label: Total Order Amount
+        type: simple
         agg: sum
         expr: amount
-        type: simple
       - name: gift_card_amount
-        description: The portion of the order amount paid using a gift card.
-        agg: sum
+        description: The total order amount paid using gift cards.
+        label: Gift Card Amount
         type: simple
+        agg: sum
+        expr: gift_card_amount
       - name: count_order
+        description: The total number of orders placed.
+        label: Order Count
+        type: simple
         agg: count
         expr: order_id
+      - name: return_count
+        description: The number of orders that were returned or are pending return.
+        label: Return Count
         type: simple
+        agg: sum
+        expr: is_return
+      - name: avg_order_value
+        description: The average revenue per order.
+        label: Average Order Value
+        type: ratio
+        numerator: total_amount
+        denominator: count_order
+      - name: gift_card_rate
+        description: The share of revenue paid using gift cards.
+        label: Gift Card Rate
+        type: ratio
+        numerator: gift_card_amount
+        denominator: total_amount
+      - name: return_rate
+        description: The proportion of orders that were returned or are pending return.
+        label: Return Rate
+        type: ratio
+        numerator: return_count
+        denominator: count_order
+      - name: cumulative_revenue
+        description: Running total of order revenue from the start of each month.
+        label: Cumulative Revenue (MTD)
+        type: cumulative
+        input_metric: total_amount
+        grain_to_date: month

@@ -1,7 +1,7 @@
 models:
   - name: time_spine_daily
     config:
-       static_analysis: unsafe
+       static_analysis: baseline
     description: A time spine with one row per day, ranging from 5 years in the past to 30 days into the future.
     time_spine:
       standard_granularity_column: date_day  # The base column used for time joins
@@ -12,7 +12,7 @@ models:
 
   - name: time_spine_yearly
     config:
-       static_analysis: unsafe
+       static_analysis: baseline
     description: time spine one row per house
     time_spine:
       standard_granularity_column: date_year

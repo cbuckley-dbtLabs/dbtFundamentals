@@ -1,0 +1,49 @@
+saved_queries:
+  - name: weekly_revenue_by_status
+    description: Weekly order revenue and count, broken down by order status. A great starting point for any revenue dashboard.
+    label: Weekly Revenue by Status
+    query_params:
+      metrics:
+        - total_amount
+        - count_order
+        - avg_order_value
+      group_by:
+        - "TimeDimension('metric_time', 'week')"
+        - "Dimension('order__order_status')"
+
+  - name: customer_segment_summary
+    description: Lifetime value and order counts grouped by customer segment and value tier.
+    label: Customer Segment Summary
+    query_params:
+      metrics:
+        - lifetime_value
+        - count_customer
+        - number_of_orders
+      group_by:
+        - "Dimension('customer__customer_segment')"
+        - "Dimension('customer__customer_value_tier')"
+
+  - name: monthly_return_analysis
+    description: Monthly return count and return rate alongside total revenue, to surface quality or fulfilment issues over time.
+    label: Monthly Return Analysis
+    query_params:
+      metrics:
+        - return_count
+        - return_rate
+        - total_amount
+        - count_order
+      group_by:
+        - "TimeDimension('metric_time', 'month')"
+        - "Dimension('order__order_status')"
+
+  - name: high_value_customer_retention
+    description: Tracks avg_order_gap and lifetime value for high-value customers to monitor retention health.
+    label: High Value Customer Retention
+    query_params:
+      metrics:
+        - lifetime_value
+        - avg_order_gap
+        - revenue_per_customer
+      group_by:
+        - "Dimension('customer__customer_value_tier')"
+        - "Dimension('customer__customer_segment')"
