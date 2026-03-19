@@ -2,9 +2,7 @@ models:
   - name: time_spine_daily
     config:
        static_analysis: baseline
-    description: A time spine with one row per day, ranging from 5 years in the past to 30 days into the future.
-    time_spine:
-      standard_granularity_column: date_day  # The base column used for time joins
+    description: A helper date table (one row per day) used to generate other calendar tables.
     columns:
       - name: date_day
         description: The base date column for daily granularity
