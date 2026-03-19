@@ -1,35 +1,33 @@
-{%- set payment_methods = ['bank_transfer','credit_card','coupon','gift_card'] -%}
+{%- set payment_methods = ["bank_transfer", "credit_card", "coupon", "gift_card"] -%}
 
 with
 
-payments_info as (
+    payments_info as (select * from {{ ref("stg_stripe__payments") }}),
 
-   select * from {{ ref('stg_stripe__payments') }}
+    pivot_and_aggregate_payments_to_order_grain as (
 
-),
+        select
+            order_id,
+            {% for payment_method in payment_methods -%}
 
-pivot_and_aggregate_payments_to_order_grain as ( 
+                sum(
+                    case
+                        when
+                            payment_method = '{{ payment_method }}'
+                            and status = 'success'
+                        then amount
+                        else 0
+                    end
+                ) as {{ payment_method }}_amount,
 
-   select
-      order_id,
-      {% for payment_method in payment_methods -%}
+            {%- endfor %}
+            sum(case when status = 'success' then amount end) as total_amount
 
-         sum(
-            case
-               when payment_method = '{{ payment_method }}' and
-                    status = 'success'
-               then amount
-               else 0
-            end
-         ) as {{ payment_method }}_amount,
+        from payments_info
 
-      {%- endfor %}
-      sum(case when status = 'success' then amount end) as total_amount
+        group by 1
 
-   from payments_info
+    )
 
-   group by 1
-
-)
-
-select * from pivot_and_aggregate_payments_to_order_grain
+select *
+from pivot_and_aggregate_payments_to_order_grain
