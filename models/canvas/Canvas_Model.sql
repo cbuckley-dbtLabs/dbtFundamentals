@@ -1,29 +1,17 @@
-WITH o AS (
+WITH fct_orders AS (
   SELECT
     *
   FROM {{ ref('fct_orders') }}
-), c AS (
+), dim_customers AS (
   SELECT
     *
   FROM {{ ref('dim_customers') }}
-), rename_1 AS (
-  SELECT
-    CUSTOMER_ID AS O_CUSTOMER_ID,
-    *
-    EXCLUDE (CUSTOMER_ID)
-  FROM o
-), rename_2 AS (
-  SELECT
-    CUSTOMER_ID AS C_CUSTOMER_ID,
-    *
-    EXCLUDE (CUSTOMER_ID)
-  FROM c
 ), join_1 AS (
   SELECT
     *
-  FROM rename_1
-  JOIN rename_2
-    ON rename_1.O_CUSTOMER_ID = rename_2.C_CUSTOMER_ID
+  FROM fct_orders
+  JOIN dim_customers
+    ON fct_orders.O_CUSTOMER_ID = dim_customers.C_CUSTOMER_ID
 ), aggregate_1 AS (
   SELECT
     O_CUSTOMER_ID,
@@ -39,7 +27,7 @@ WITH o AS (
     O_CUSTOMER_ID,
     FIRST_NAME,
     LAST_NAME
-), rename_3 AS (
+), rename_1 AS (
   SELECT
     O_CUSTOMER_ID AS CUSTOMER_ID,
     FIRST_NAME,
@@ -53,7 +41,7 @@ WITH o AS (
 ), order_1 AS (
   SELECT
     *
-  FROM rename_3
+  FROM rename_1
   ORDER BY
     TOTAL_SPENT DESC
 ), canvas_model_sql AS (
