@@ -7,12 +7,12 @@ models:
     columns:
       - name: order_id
         description: Primary key for the order.
-        tests:
+        data_tests:
           - unique
           - not_null
       - name: customer_id
         description: Foreign key to the customer dimension.
-        tests:
+        data_tests:
           - not_null
       - name: order_date
         description: The date the order was placed.
