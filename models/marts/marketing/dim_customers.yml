@@ -13,6 +13,9 @@ models:
         entity:
           type: primary
           name: customer
+        data_tests:
+          - unique
+          - not_null
       # Time dimensions
       - name: first_order_date
         description: The date when the customer placed their first order.

@@ -14,11 +14,19 @@ models:
         entity:
           type: primary
           name: order
+        data_tests:
+          - unique
+          - not_null
       - name: customer_id
         description: The unique identifier of the customer who placed the order.
         entity:
           type: foreign
           name: customer
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
       # Time dimension
       - name: order_date
         description: The date on which the order was placed.

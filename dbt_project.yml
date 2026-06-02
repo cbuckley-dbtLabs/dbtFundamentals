@@ -1,7 +1,7 @@
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'jaffle_shop'
+name: 'dbt_fundamentals'
 version: '1.0.0'
 config-version: 2
 
@@ -21,26 +21,18 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
 
-
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
-# In dbt, the default materialization for a model is a view. This means, when you run 
-# dbt run or dbt build, all of your models will be built as a view in your data platform. 
-# The configuration below will override this setting for models in the example folder to 
-# instead be materialized as tables. Any models you add to the root of the models folder will 
-# continue to be built as views. These settings can be overridden in the individual model files
-# using the `{{ config(...) }}` macro.
-
-
+# In dbt, the default materialization for a model is a view. This means, when you run
+# dbt run or dbt build, all of your models will be built as a view in your data platform.
+# The configuration below sets the project defaults by layer.
 models:
-  resource-path:
+  dbt_fundamentals:
     +static_analysis: baseline
-  jaffle_shop:
-    # Applies to all files under models/example/
     staging:
+      +materialized: view
+    intermediate:
       +materialized: view
     marts:
       +materialized: table
-flags:
-  require_generic_test_arguments_property: true
