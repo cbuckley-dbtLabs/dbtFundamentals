@@ -28,14 +28,6 @@ models:
         dimension:
           type: time
       # Categorical dimensions
-      - name: first_name
-        description: The first name of the customer.
-        dimension:
-          type: categorical
-      - name: last_name
-        description: The last name of the customer.
-        dimension:
-          type: categorical
       - name: customer_segment
         description: Behavioural segment based on order frequency (No Orders / New / Repeat / Loyal).
         dimension:

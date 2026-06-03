@@ -65,6 +65,12 @@ models:
         type: simple
         agg: count
         expr: order_id
+      - name: count_ordering_customer
+        description: The distinct number of customers with at least one order in the filtered slice.
+        label: Ordering Customer Count
+        type: simple
+        agg: count_distinct
+        expr: customer_id
       - name: return_count
         description: The number of orders that were returned or are pending return.
         label: Return Count
@@ -77,6 +83,18 @@ models:
         type: ratio
         numerator: total_amount
         denominator: count_order
+      - name: revenue_per_customer
+        description: Average revenue per ordering customer in the filtered slice.
+        label: Revenue per Ordering Customer
+        type: ratio
+        numerator: total_amount
+        denominator: count_ordering_customer
+      - name: orders_per_customer
+        description: Average number of orders per ordering customer in the filtered slice.
+        label: Orders per Ordering Customer
+        type: ratio
+        numerator: count_order
+        denominator: count_ordering_customer
       - name: gift_card_rate
         description: The share of revenue paid using gift cards.
         label: Gift Card Rate
