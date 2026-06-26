@@ -1,19 +1,20 @@
 version: 2
 
 exposures:
-
   - name: weekly_jaffle_metrics
     label: Jaffles by the Week
     type: dashboard
     maturity: high
     url: https://bi.tool/dashboards/1
-    description: >
-      Report of jaffles sold by the week!
-
+    description: Weekly dashboard for tracking order volume, revenue, and customer activity.
+    config:
+      tags: ["bi", "finance", "published"]
+      meta:
+        owner_team: "analytics"
+        domain: "finance"
     depends_on:
       - ref('fct_orders')
       - ref('dim_customers')
-
     owner:
       name: Callum McData
       email: data@jaffleshop.com
@@ -23,13 +24,15 @@ exposures:
     type: dashboard
     maturity: high
     url: https://bi.tool/dashboards/2
-    description: >
-      Insights into sales?
-
+    description: Daily dashboard for monitoring customer spend and revenue performance.
+    config:
+      tags: ["bi", "marketing", "published"]
+      meta:
+        owner_team: "analytics"
+        domain: "marketing"
     depends_on:
       - ref('fct_orders')
       - ref('dim_customers')
-
     owner:
       name: Robert Paulson
       email: robpaul@jaffleshop.com

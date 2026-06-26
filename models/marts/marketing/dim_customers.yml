@@ -3,11 +3,25 @@ models:
     description: >
       Comprehensive customer dimension with personal details, order history,
       behavioural segmentation, and retention signals.
+    config:
+      tags: ["mart", "marketing", "published"]
+      meta:
+        owner: "data"
+        layer: "mart"
+        domain: "marketing"
+        grain: "one row per customer"
+        primary_metric: "count_customer"
+        contains_pii: true
     semantic_model:
       enabled: true
+      group: marketing
+      config:
+        meta:
+          owner: "data"
+          domain: "marketing"
+          semantic_role: "customers"
     agg_time_dimension: first_order_date
     columns:
-      # Entities
       - name: customer_id
         description: A unique identifier for each customer.
         entity:
@@ -16,7 +30,10 @@ models:
         data_tests:
           - unique
           - not_null
-      # Time dimensions
+      - name: first_name
+        description: The customer's first name.
+      - name: last_name
+        description: The customer's last name.
       - name: first_order_date
         description: The date when the customer placed their first order.
         granularity: day
@@ -27,12 +44,10 @@ models:
         granularity: day
         dimension:
           type: time
-      # Categorical dimensions
       - name: customer_segment
         description: Behavioural segment based on order frequency (No Orders / New / Repeat / Loyal).
         dimension:
           type: categorical
-      # Measures
       - name: number_of_orders
         description: The total number of orders placed by the customer.
       - name: lifetime_value

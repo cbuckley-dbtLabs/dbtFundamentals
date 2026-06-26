@@ -29,7 +29,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 # The configuration below sets the project defaults by layer.
 models:
   dbt_fundamentals:
-    +static_analysis: baseline
+    +static_analysis: strict
     staging:
       +materialized: view
     intermediate:
