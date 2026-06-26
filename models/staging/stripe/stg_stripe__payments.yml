@@ -1,22 +1,50 @@
+version: 2
+
 models:
   - name: stg_stripe__payments
+    description: Staged Stripe payment events, standardized to one row per payment with amounts converted from cents to dollars.
+    config:
+      tags: ["staging", "stripe", "finance"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "finance"
+        grain: "one row per payment"
     columns:
       - name: payment_id
+        description: Primary key for the payment event.
         data_tests:
           - unique
           - not_null
       - name: order_id
+        description: Foreign key to the order this payment was applied to.
         data_tests:
           - not_null
       - name: payment_method
+        description: Payment method used for the transaction.
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - bank_transfer
+                  - credit_card
+                  - coupon
+                  - gift_card
       - name: status
+        description: Final payment status recorded by Stripe.
         data_tests:
           - not_null
+          - accepted_values:
+              arguments:
+                values:
+                  - success
+                  - fail
       - name: amount
+        description: Payment amount in dollars.
         data_tests:
           - not_null
       - name: created_at
+        description: Timestamp when the payment event was created.
         data_tests:
           - not_null

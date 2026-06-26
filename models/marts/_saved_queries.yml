@@ -1,7 +1,12 @@
 saved_queries:
   - name: weekly_revenue_by_status
-    description: Weekly order revenue and count, broken down by order status. A great starting point for any revenue dashboard.
+    description: Weekly order revenue and count, broken down by order status. A strong starting point for revenue performance monitoring.
     label: Weekly Revenue by Status
+    config:
+      tags: ["semantic_layer", "finance", "published"]
+      meta:
+        owner: "data"
+        domain: "finance"
     query_params:
       metrics:
         - total_amount
@@ -14,6 +19,11 @@ saved_queries:
   - name: customer_segment_summary
     description: Lifetime value and order counts grouped by customer segment and value tier.
     label: Customer Segment Summary
+    config:
+      tags: ["semantic_layer", "marketing", "published"]
+      meta:
+        owner: "data"
+        domain: "marketing"
     query_params:
       metrics:
         - lifetime_value
@@ -26,6 +36,11 @@ saved_queries:
   - name: monthly_return_analysis
     description: Monthly return count and return rate alongside total revenue, to surface quality or fulfilment issues over time.
     label: Monthly Return Analysis
+    config:
+      tags: ["semantic_layer", "finance", "quality"]
+      meta:
+        owner: "data"
+        domain: "finance"
     query_params:
       metrics:
         - return_count
@@ -39,6 +54,11 @@ saved_queries:
   - name: high_value_customer_retention
     description: Tracks avg_order_gap and lifetime value for high-value customers to monitor retention health.
     label: High Value Customer Retention
+    config:
+      tags: ["semantic_layer", "marketing", "retention"]
+      meta:
+        owner: "data"
+        domain: "marketing"
     query_params:
       metrics:
         - lifetime_value
