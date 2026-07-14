@@ -4,3 +4,6 @@ target/
 dbt_packages/
 logs/
 dbt_internal_packages/
+.env
+dbt_cloud.yml
+dbt_cloud.yaml

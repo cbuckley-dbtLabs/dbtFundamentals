@@ -1,0 +1,20 @@
+{
+  "files.exclude": {
+    "**/dbt_internal_packages": true,
+    "**/dbt_packages": true,
+    "**/logs": true,
+    "**/target": true
+  },
+  "files.watcherExclude": {
+    "**/dbt_internal_packages/**": true,
+    "**/dbt_packages/**": true,
+    "**/logs/**": true,
+    "**/target/**": true
+  },
+  "search.exclude": {
+    "**/dbt_internal_packages": true,
+    "**/dbt_packages": true,
+    "**/logs": true,
+    "**/target": true
+  }
+}

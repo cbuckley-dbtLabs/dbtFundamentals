@@ -9,6 +9,6 @@ sources:
         # loaded_at_field: _batched_at
         config:
           freshness:
-            warn_after: {count: 3, period: day}
+            warn_after: {count: 730, period: day}
             error_after: {count: 1000, period: day}
-          loaded_at_field: _batched_at
+          loaded_at_field: "convert_timezone('UTC', _batched_at)"
