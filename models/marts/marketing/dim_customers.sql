@@ -3,8 +3,6 @@ with
 
 customers as (select * from {{ ref("stg_jaffle_shop__customers") }}),
 
-orders as (select * from {{ ref("fct_orders") }}),
-
 order_history as (select * from {{ ref("int_customer_order_history") }}),
 
 customer_orders as (
@@ -16,7 +14,7 @@ customer_orders as (
         count(order_id) as number_of_orders,
         sum(amount) as lifetime_value
 
-    from orders
+    from order_history
 
     group by 1
 
