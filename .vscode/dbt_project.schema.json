@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "dbt project",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "models": {
+      "$ref": "#/$defs/configTree"
+    }
+  },
+  "$defs": {
+    "configTree": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/configTree"
+          },
+          {
+            "type": [
+              "array",
+              "boolean",
+              "integer",
+              "null",
+              "number",
+              "object",
+              "string"
+            ]
+          }
+        ]
+      },
+      "properties": {
+        "+static_analysis": {
+          "enum": [
+            "off",
+            "baseline",
+            "strict"
+          ]
+        }
+      }
+    }
+  }
+}

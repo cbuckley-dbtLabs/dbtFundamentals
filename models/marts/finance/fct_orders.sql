@@ -13,6 +13,7 @@ with
             orders.status as order_status,
             coalesce(order_payments.total_amount, 0) as amount,
             coalesce(order_payments.gift_card_amount, 0) as gift_card_amount,
+            coalesce(order_payments.credit_card_amount, 0) as credit_card_amount,
             case
                 when orders.status in ('returned', 'return_pending') then 1 else 0
             end as is_return

@@ -9,7 +9,7 @@ saved_queries:
         - avg_order_value
       group_by:
         - "TimeDimension('metric_time', 'week')"
-        - "Dimension('order__order_status')"
+        - "Dimension('orders__order_status')"
 
   - name: customer_segment_summary
     description: Lifetime value and order counts grouped by customer segment and value tier.
@@ -34,7 +34,7 @@ saved_queries:
         - count_order
       group_by:
         - "TimeDimension('metric_time', 'month')"
-        - "Dimension('order__order_status')"
+        - "Dimension('orders__order_status')"
 
   - name: high_value_customer_retention
     description: Tracks avg_order_gap and lifetime value for high-value customers to monitor retention health.

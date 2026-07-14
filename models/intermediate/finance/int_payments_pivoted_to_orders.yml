@@ -8,14 +8,31 @@ models:
   columns:
   - name: order_id
     description: A unique identifier for each order.
+    data_tests:
+    - unique
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('stg_jaffle_shop__orders')
+          field: order_id
   - name: bank_transfer_amount
     description: The total amount paid via bank transfer for the order.
+    data_tests:
+    - not_null
   - name: credit_card_amount
     description: The total amount paid via credit card for the order.
+    data_tests:
+    - not_null
   - name: coupon_amount
     description: The total amount paid using coupons for the order.
+    data_tests:
+    - not_null
   - name: gift_card_amount
     description: The total amount paid using gift cards for the order.
+    data_tests:
+    - not_null
   - name: total_amount
     description: The total successful payment amount for the order across all payment
       methods.
+    data_tests:
+    - not_null

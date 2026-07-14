@@ -1,0 +1,71 @@
+models:
+  - name: mrt_customer_order_summary
+    description: >
+      Customer-level order and revenue summary for dashboard reporting. The model
+      has one row per customer and rolls up order activity, successful payment
+      revenue, and fulfillment status counts.
+    columns:
+      - name: customer_id
+        description: A unique identifier for each customer.
+        data_tests:
+          - unique
+          - not_null
+
+      - name: first_name
+        description: The customer's first name.
+
+      - name: last_name
+        description: The customer's last name.
+
+      - name: first_order_date
+        description: The date when the customer placed their first order. Null when the customer has not ordered.
+
+      - name: most_recent_order_date
+        description: The date when the customer placed their most recent order. Null when the customer has not ordered.
+
+      - name: total_orders
+        description: The total number of orders placed by the customer.
+        data_tests:
+          - not_null
+
+      - name: completed_orders
+        description: The number of customer orders with a completed order status.
+        data_tests:
+          - not_null
+
+      - name: returned_orders
+        description: The number of customer orders with a returned order status.
+        data_tests:
+          - not_null
+
+      - name: total_revenue
+        description: The total successful payment revenue attributed to the customer.
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        description: >
+          The customer's average revenue per successful paid order. Customers
+          without successful paid orders have an average order value of 0.
+        data_tests:
+          - not_null
+
+      - name: customer_lifetime_value
+        description: The customer's lifetime value, currently defined as total successful payment revenue.
+        data_tests:
+          - not_null
+
+      - name: days_since_last_order
+        description: >
+          Number of days between the customer's most recent order and today. Null
+          when the customer has not ordered.
+
+      - name: is_repeat_customer
+        description: Flag indicating whether the customer has placed more than one order.
+        data_tests:
+          - not_null
+
+      - name: customer_segment
+        description: Behavioural segment based on order frequency (No Orders / New / Repeat / Loyal).
+        data_tests:
+          - not_null

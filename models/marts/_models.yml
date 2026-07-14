@@ -7,6 +7,9 @@ models:
       - name: date_day
         description: The base date column for daily granularity
         granularity: day
+        data_tests:
+          - unique
+          - not_null
 
   - name: time_spine_yearly
     config:
@@ -17,6 +20,9 @@ models:
     columns:
       - name: date_year
         granularity: year
+        data_tests:
+          - unique
+          - not_null
 
   - name: fiscal_calendar
     description: A custom fiscal calendar with fiscal year and fiscal week granularities.
@@ -30,7 +36,14 @@ models:
     columns:
       - name: date_day
         granularity: day
+        data_tests:
+          - unique
+          - not_null
       - name: fiscal_year
         description: "Custom fiscal year starting in October"
+        data_tests:
+          - not_null
       - name: fiscal_week
         description: "Fiscal week, shifted by 1 week from standard calendar"
+        data_tests:
+          - not_null
