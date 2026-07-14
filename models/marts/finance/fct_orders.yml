@@ -4,11 +4,24 @@ models:
       Comprehensive view of customer orders including order ID, customer ID,
       order date, status, total amount, gift card usage, and return flag.
       The central table for order trends, customer purchasing behaviour, and revenue analysis.
+    config:
+      tags: ["mart", "finance", "published"]
+      meta:
+        owner: "data"
+        layer: "mart"
+        domain: "finance"
+        grain: "one row per order"
+        primary_metric: "total_amount"
     semantic_model:
       enabled: true
+      group: finance
+      config:
+        meta:
+          owner: "data"
+          domain: "finance"
+          semantic_role: "orders"
     agg_time_dimension: order_date
     columns:
-      # Entities
       - name: order_id
         description: A unique identifier for each order.
         entity:
@@ -23,29 +36,30 @@ models:
           type: foreign
           name: customer
         data_tests:
+          - not_null
           - relationships:
               arguments:
                 to: ref('dim_customers')
                 field: customer_id
-      # Time dimension
       - name: order_date
         description: The date on which the order was placed.
         granularity: day
         dimension:
           type: time
-      # Categorical dimensions
       - name: order_status
-        description: The current status of the order (e.g. placed, shipped, completed, returned).
+        description: The current status of the order (for example placed, shipped, completed, returned).
         dimension:
           type: categorical
-      # Measures
       - name: amount
         description: The total monetary value of the order.
       - name: gift_card_amount
         description: The portion of the order amount paid using a gift card.
       - name: is_return
-        description: >
-          Flag indicating whether the order was returned or is pending return (1 = yes, 0 = no).
+        description: Flag indicating whether the order was returned or is pending return (1 = yes, 0 = no).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
     metrics:
       - name: total_amount
         description: The total monetary value of all orders.
