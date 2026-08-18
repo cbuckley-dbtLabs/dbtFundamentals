@@ -1,0 +1,257 @@
+version: 2
+
+models:
+  - name: int_customer_lifecycle_windows
+    description: >
+      Dense customer lifecycle feature table with one row per customer, as-of date,
+      and lookback window. It supports retention, activity, and revenue analysis
+      by measuring each customer's rolling activity and lifetime value as of each day.
+    config:
+      tags: ["slow_agg", "customer_lifecycle", "intermediate", "marketing"]
+      meta:
+        owner: "data"
+        layer: "intermediate"
+        domain: "marketing"
+        grain: "one row per customer, as-of date, and lookback window"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - customer_id
+              - as_of_date
+              - lookback_window_days
+    columns:
+      - name: customer_id
+        description: Customer identifier from `dim_customers`.
+        data_tests:
+          - not_null
+      - name: as_of_date
+        description: Date the lifecycle features are measured as of.
+        data_tests:
+          - not_null
+      - name: lookback_window_days
+        description: Number of days included in the rolling activity window.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [7, 14, 30, 60, 90, 180, 365, 730, 1095, 1460, 1825, 2555]
+      - name: window_start_date
+        description: First date included in the rolling lookback window.
+        data_tests:
+          - not_null
+      - name: first_order_date
+        description: Customer's first observed order date. Null when no order has occurred.
+      - name: first_order_month
+        description: Month of the customer's first observed order. Null when no order has occurred.
+      - name: customer_segment
+        description: Customer segment inherited from `dim_customers`.
+        data_tests:
+          - not_null
+      - name: lifecycle_state
+        description: Customer state as of the date/window, such as Active, Lapsed, Dormant, or No Orders Yet.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["No Orders Yet", "Active", "Lapsed", "Dormant"]
+      - name: is_active_in_window
+        description: Boolean flag indicating whether the customer had at least one order in the lookback window.
+        data_tests:
+          - not_null
+      - name: most_recent_order_date
+        description: Most recent order date on or before the as-of date.
+      - name: days_since_most_recent_order
+        description: Days between the most recent order and the as-of date.
+      - name: lifetime_orders_to_date
+        description: Count of orders up to and including the as-of date.
+        data_tests:
+          - not_null
+      - name: lifetime_revenue_to_date
+        description: Total order revenue up to and including the as-of date.
+        data_tests:
+          - not_null
+      - name: orders_in_window
+        description: Count of orders within the lookback window.
+        data_tests:
+          - not_null
+      - name: completed_orders_in_window
+        description: Count of completed orders within the lookback window.
+        data_tests:
+          - not_null
+      - name: returned_orders_in_window
+        description: Count of returned or pending-return orders within the lookback window.
+        data_tests:
+          - not_null
+      - name: revenue_in_window
+        description: Total revenue within the lookback window.
+        data_tests:
+          - not_null
+      - name: gift_card_amount_in_window
+        description: Gift-card revenue within the lookback window.
+        data_tests:
+          - not_null
+      - name: credit_card_amount_in_window
+        description: Credit-card revenue within the lookback window.
+        data_tests:
+          - not_null
+
+  - name: agg_customer_lifecycle_daily
+    description: >
+      Daily customer lifecycle aggregation by as-of date, lookback window,
+      customer segment, and lifecycle state. This mart supports operational
+      monitoring of active, lapsed, dormant, and not-yet-ordering customers.
+    config:
+      tags: ["slow_agg", "customer_lifecycle", "mart", "marketing"]
+      meta:
+        owner: "data"
+        layer: "mart"
+        domain: "marketing"
+        grain: "one row per as-of date, lookback window, customer segment, and lifecycle state"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - as_of_date
+              - lookback_window_days
+              - customer_segment
+              - lifecycle_state
+    columns:
+      - name: as_of_date
+        description: Date the lifecycle aggregate is measured as of.
+        data_tests:
+          - not_null
+      - name: lookback_window_days
+        description: Number of days included in the rolling activity window.
+        data_tests:
+          - not_null
+      - name: customer_segment
+        description: Customer segment from the lifecycle feature table.
+        data_tests:
+          - not_null
+      - name: lifecycle_state
+        description: Customer lifecycle state for the aggregate row.
+        data_tests:
+          - not_null
+      - name: customer_count
+        description: Number of customers in the segment/state/window.
+        data_tests:
+          - not_null
+      - name: active_customer_count
+        description: Number of customers with at least one order in the lookback window.
+        data_tests:
+          - not_null
+      - name: customers_with_orders_to_date
+        description: Number of customers with at least one order on or before the as-of date.
+        data_tests:
+          - not_null
+      - name: lifetime_orders_to_date
+        description: Total lifetime orders through the as-of date across customers in the aggregate row.
+        data_tests:
+          - not_null
+      - name: lifetime_revenue_to_date
+        description: Total lifetime revenue through the as-of date across customers in the aggregate row.
+        data_tests:
+          - not_null
+      - name: orders_in_window
+        description: Total orders in the lookback window.
+        data_tests:
+          - not_null
+      - name: completed_orders_in_window
+        description: Total completed orders in the lookback window.
+        data_tests:
+          - not_null
+      - name: returned_orders_in_window
+        description: Total returned or pending-return orders in the lookback window.
+        data_tests:
+          - not_null
+      - name: revenue_in_window
+        description: Total revenue in the lookback window.
+        data_tests:
+          - not_null
+      - name: gift_card_amount_in_window
+        description: Gift-card revenue in the lookback window.
+        data_tests:
+          - not_null
+      - name: credit_card_amount_in_window
+        description: Credit-card revenue in the lookback window.
+        data_tests:
+          - not_null
+      - name: avg_days_since_most_recent_order
+        description: Average days since most recent order for customers with prior orders.
+      - name: revenue_per_active_customer
+        description: Rolling-window revenue divided by active customers.
+      - name: active_customer_rate
+        description: Share of customers in the row that were active in the lookback window.
+      - name: return_rate_in_window
+        description: Share of rolling-window orders that were returned or pending return.
+
+  - name: agg_customer_retention_cohorts
+    description: >
+      Monthly retention cohort aggregation by first-order month, as-of month,
+      lookback window, and lifecycle state. This mart supports tracking how
+      customer activity and revenue evolve after first purchase.
+    config:
+      tags: ["slow_agg", "customer_lifecycle", "mart", "marketing"]
+      meta:
+        owner: "data"
+        layer: "mart"
+        domain: "marketing"
+        grain: "one row per cohort month, as-of month, lookback window, and lifecycle state"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - first_order_month
+              - as_of_month
+              - lookback_window_days
+              - lifecycle_state
+    columns:
+      - name: first_order_month
+        description: Month of each customer's first observed order.
+        data_tests:
+          - not_null
+      - name: as_of_month
+        description: Month the cohort metrics are measured as of.
+        data_tests:
+          - not_null
+      - name: months_since_first_order
+        description: Number of months between first-order month and as-of month.
+        data_tests:
+          - not_null
+      - name: lookback_window_days
+        description: Number of days included in the rolling activity window.
+        data_tests:
+          - not_null
+      - name: lifecycle_state
+        description: Customer lifecycle state for the cohort row.
+        data_tests:
+          - not_null
+      - name: cohort_customer_count
+        description: Number of customers in the cohort/state/window.
+        data_tests:
+          - not_null
+      - name: active_customer_count
+        description: Number of cohort customers active in the lookback window.
+        data_tests:
+          - not_null
+      - name: lifetime_orders_to_date
+        description: Total lifetime orders through the as-of month across customers in the cohort row.
+        data_tests:
+          - not_null
+      - name: lifetime_revenue_to_date
+        description: Total lifetime revenue through the as-of month across customers in the cohort row.
+        data_tests:
+          - not_null
+      - name: orders_in_window
+        description: Total orders in the lookback window.
+        data_tests:
+          - not_null
+      - name: revenue_in_window
+        description: Total revenue in the lookback window.
+        data_tests:
+          - not_null
+      - name: retention_rate
+        description: Active customers divided by cohort customers for the row.
+      - name: revenue_per_active_customer
+        description: Rolling-window revenue divided by active customers in the cohort row.

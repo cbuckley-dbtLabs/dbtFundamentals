@@ -42,3 +42,8 @@ models:
       +materialized: view
     marts:
       +materialized: table
+
+vars:
+  customer_lifecycle_as_of_start_date: '2018-01-01'
+  customer_lifecycle_as_of_end_date: current_date
+  customer_lifecycle_window_days: [7, 14, 30, 60, 90, 180, 365, 730, 1095, 1460, 1825, 2555]
