@@ -10,7 +10,6 @@ models:
         layer: "mart"
         domain: "marketing"
         grain: "one row per customer"
-        primary_metric: "count_customer"
         contains_pii: true
     semantic_model:
       enabled: true
@@ -71,28 +70,3 @@ models:
               when lifetime_value >= 75 then 'Mid Value'
               else 'Low Value'
             end
-    metrics:
-      - name: number_of_orders
-        description: The total number of orders placed across all customers.
-        label: Number of Orders
-        type: simple
-        agg: sum
-        expr: number_of_orders
-      - name: lifetime_value
-        description: The total revenue generated across all customers.
-        label: Customer Lifetime Value
-        type: simple
-        agg: sum
-        expr: lifetime_value
-      - name: count_customer
-        description: The total number of customers.
-        label: Customer Count
-        type: simple
-        agg: count
-        expr: customer_id
-      - name: avg_order_gap
-        description: Average number of days between repeat orders, across all customers.
-        label: Avg Days Between Orders
-        type: simple
-        agg: average
-        expr: avg_days_between_orders

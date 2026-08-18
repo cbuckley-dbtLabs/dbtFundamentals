@@ -3,6 +3,7 @@ models:
     config:
        static_analysis: baseline
     description: A helper date table (one row per day) used to generate other calendar tables.
+
     columns:
       - name: date_day
         description: The base date column for daily granularity

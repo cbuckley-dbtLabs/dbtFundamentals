@@ -72,3 +72,4 @@ customers_enriched as (
 
 select *
 from customers_enriched
+
