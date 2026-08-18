@@ -26,7 +26,7 @@ models:
         description: A unique identifier for each order.
         entity:
           type: primary
-          name: orders
+          name: customer_order
         data_tests:
           - unique
           - not_null

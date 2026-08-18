@@ -14,24 +14,7 @@ saved_queries:
         - avg_order_value
       group_by:
         - "TimeDimension('metric_time', 'week')"
-        - "Dimension('orders__order_status')"
-
-  - name: customer_segment_summary
-    description: Lifetime value and order counts grouped by customer segment and value tier.
-    label: Customer Segment Summary
-    config:
-      tags: ["semantic_layer", "marketing", "published"]
-      meta:
-        owner: "data"
-        domain: "marketing"
-    query_params:
-      metrics:
-        - lifetime_value
-        - count_customer
-        - number_of_orders
-      group_by:
-        - "Dimension('customer__customer_segment')"
-        - "Dimension('customer__customer_value_tier')"
+        - "Dimension('customer_order__order_status')"
 
   - name: monthly_return_analysis
     description: Monthly return count and return rate alongside total revenue, to surface quality or fulfilment issues over time.
@@ -49,21 +32,4 @@ saved_queries:
         - count_order
       group_by:
         - "TimeDimension('metric_time', 'month')"
-        - "Dimension('orders__order_status')"
-
-  - name: high_value_customer_retention
-    description: Tracks avg_order_gap and lifetime value for high-value customers to monitor retention health.
-    label: High Value Customer Retention
-    config:
-      tags: ["semantic_layer", "marketing", "retention"]
-      meta:
-        owner: "data"
-        domain: "marketing"
-    query_params:
-      metrics:
-        - lifetime_value
-        - avg_order_gap
-        - revenue_per_customer
-      group_by:
-        - "Dimension('customer__customer_value_tier')"
-        - "Dimension('customer__customer_segment')"
+        - "Dimension('customer_order__order_status')"
