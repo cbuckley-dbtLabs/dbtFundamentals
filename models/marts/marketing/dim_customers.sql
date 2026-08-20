@@ -11,10 +11,13 @@ customer_orders as (
 
     select
         customer_id,
-        min(order_date) as first_order_date,
-        max(order_date) as most_recent_order_date,
-        count(order_id) as number_of_orders,
-        sum(amount) as lifetime_value
+            min(order_date) as first_order_date,
+            max(order_date) as most_recent_order_date,
+            count(order_id) as number_of_orders,
+            sum(amount) as lifetime_value,
+            sum(net_amount) as lifetime_net_value,
+            sum(total_refund_amount) as lifetime_refund_amount,
+            sum(is_state_demo_order) as state_demo_order_count
 
     from orders
 
@@ -45,6 +48,9 @@ customers_enriched as (
         customer_orders.first_order_date,
         customer_orders.most_recent_order_date,
         customer_orders.lifetime_value,
+        coalesce(customer_orders.lifetime_net_value, 0) as lifetime_net_value,
+        coalesce(customer_orders.lifetime_refund_amount, 0) as lifetime_refund_amount,
+        coalesce(customer_orders.state_demo_order_count, 0) as state_demo_order_count,
         order_gaps.avg_days_between_orders,
         coalesce(customer_orders.number_of_orders, 0) as number_of_orders,
         datediff(
@@ -72,4 +78,3 @@ customers_enriched as (
 
 select *
 from customers_enriched
-

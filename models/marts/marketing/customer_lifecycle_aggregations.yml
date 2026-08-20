@@ -71,6 +71,14 @@ models:
         description: Total order revenue up to and including the as-of date.
         data_tests:
           - not_null
+      - name: lifetime_net_revenue_to_date
+        description: Total order revenue after state-demo refunds up to and including the as-of date.
+        data_tests:
+          - not_null
+      - name: lifetime_refund_amount_to_date
+        description: Total state-demo refund amount up to and including the as-of date.
+        data_tests:
+          - not_null
       - name: orders_in_window
         description: Count of orders within the lookback window.
         data_tests:
@@ -83,8 +91,28 @@ models:
         description: Count of returned or pending-return orders within the lookback window.
         data_tests:
           - not_null
+      - name: state_demo_orders_in_window
+        description: Count of orders with attached state_demo enrichment within the lookback window.
+        data_tests:
+          - not_null
+      - name: delivered_orders_in_window
+        description: Count of orders with delivered state-demo shipment events within the lookback window.
+        data_tests:
+          - not_null
+      - name: refunded_orders_in_window
+        description: Count of orders with approved state-demo refunds within the lookback window.
+        data_tests:
+          - not_null
       - name: revenue_in_window
         description: Total revenue within the lookback window.
+        data_tests:
+          - not_null
+      - name: net_revenue_in_window
+        description: Total revenue after state-demo refunds within the lookback window.
+        data_tests:
+          - not_null
+      - name: refund_amount_in_window
+        description: Total state-demo refund amount within the lookback window.
         data_tests:
           - not_null
       - name: gift_card_amount_in_window
@@ -153,6 +181,14 @@ models:
         description: Total lifetime revenue through the as-of date across customers in the aggregate row.
         data_tests:
           - not_null
+      - name: lifetime_net_revenue_to_date
+        description: Total lifetime revenue after state-demo refunds through the as-of date.
+        data_tests:
+          - not_null
+      - name: lifetime_refund_amount_to_date
+        description: Total state-demo refund amount through the as-of date.
+        data_tests:
+          - not_null
       - name: orders_in_window
         description: Total orders in the lookback window.
         data_tests:
@@ -165,8 +201,28 @@ models:
         description: Total returned or pending-return orders in the lookback window.
         data_tests:
           - not_null
+      - name: state_demo_orders_in_window
+        description: Total orders with attached state_demo enrichment in the lookback window.
+        data_tests:
+          - not_null
+      - name: delivered_orders_in_window
+        description: Total orders with delivered state-demo shipment events in the lookback window.
+        data_tests:
+          - not_null
+      - name: refunded_orders_in_window
+        description: Total orders with approved state-demo refunds in the lookback window.
+        data_tests:
+          - not_null
       - name: revenue_in_window
         description: Total revenue in the lookback window.
+        data_tests:
+          - not_null
+      - name: net_revenue_in_window
+        description: Total revenue after state-demo refunds in the lookback window.
+        data_tests:
+          - not_null
+      - name: refund_amount_in_window
+        description: Total state-demo refund amount in the lookback window.
         data_tests:
           - not_null
       - name: gift_card_amount_in_window
@@ -181,10 +237,14 @@ models:
         description: Average days since most recent order for customers with prior orders.
       - name: revenue_per_active_customer
         description: Rolling-window revenue divided by active customers.
+      - name: net_revenue_per_active_customer
+        description: Rolling-window revenue after state-demo refunds divided by active customers.
       - name: active_customer_rate
         description: Share of customers in the row that were active in the lookback window.
       - name: return_rate_in_window
         description: Share of rolling-window orders that were returned or pending return.
+      - name: refund_rate_in_window
+        description: State-demo refund amount divided by gross revenue in the lookback window.
 
   - name: agg_customer_retention_cohorts
     description: >
@@ -243,15 +303,37 @@ models:
         description: Total lifetime revenue through the as-of month across customers in the cohort row.
         data_tests:
           - not_null
+      - name: lifetime_net_revenue_to_date
+        description: Total lifetime revenue after state-demo refunds through the as-of month.
+        data_tests:
+          - not_null
+      - name: lifetime_refund_amount_to_date
+        description: Total state-demo refund amount through the as-of month.
+        data_tests:
+          - not_null
       - name: orders_in_window
         description: Total orders in the lookback window.
+        data_tests:
+          - not_null
+      - name: state_demo_orders_in_window
+        description: Total orders with attached state_demo enrichment in the lookback window.
         data_tests:
           - not_null
       - name: revenue_in_window
         description: Total revenue in the lookback window.
         data_tests:
           - not_null
+      - name: net_revenue_in_window
+        description: Total revenue after state-demo refunds in the lookback window.
+        data_tests:
+          - not_null
+      - name: refund_amount_in_window
+        description: Total state-demo refund amount in the lookback window.
+        data_tests:
+          - not_null
       - name: retention_rate
         description: Active customers divided by cohort customers for the row.
       - name: revenue_per_active_customer
         description: Rolling-window revenue divided by active customers in the cohort row.
+      - name: net_revenue_per_active_customer
+        description: Rolling-window revenue after state-demo refunds divided by active customers in the cohort row.

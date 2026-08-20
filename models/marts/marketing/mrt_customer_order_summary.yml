@@ -38,8 +38,38 @@ models:
         data_tests:
           - not_null
 
+      - name: state_demo_orders
+        description: The number of customer orders with attached state_demo enrichment.
+        data_tests:
+          - not_null
+
+      - name: delivered_orders
+        description: The number of customer orders with delivered state-demo shipment events.
+        data_tests:
+          - not_null
+
+      - name: refunded_orders
+        description: The number of customer orders with approved state-demo refunds.
+        data_tests:
+          - not_null
+
       - name: total_revenue
         description: The total successful payment revenue attributed to the customer.
+        data_tests:
+          - not_null
+
+      - name: total_net_revenue
+        description: Customer order revenue after subtracting state-demo refunds.
+        data_tests:
+          - not_null
+
+      - name: total_refund_amount
+        description: Total state-demo refund amount attributed to the customer.
+        data_tests:
+          - not_null
+
+      - name: total_items_ordered
+        description: Total state-demo item quantity attributed to the customer.
         data_tests:
           - not_null
 

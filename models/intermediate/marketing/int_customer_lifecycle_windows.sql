@@ -70,8 +70,13 @@ with
             order_date,
             order_status,
             amount,
+            net_amount,
+            total_refund_amount,
             gift_card_amount,
             credit_card_amount,
+            is_state_demo_order,
+            is_delivered,
+            has_approved_refund,
             is_return
 
         from {{ ref("fct_orders") }}
@@ -111,6 +116,8 @@ with
             max(orders.order_date) as most_recent_order_date,
             count(orders.order_id) as lifetime_orders_to_date,
             coalesce(sum(orders.amount), 0) as lifetime_revenue_to_date,
+            coalesce(sum(orders.net_amount), 0) as lifetime_net_revenue_to_date,
+            coalesce(sum(orders.total_refund_amount), 0) as lifetime_refund_amount_to_date,
             count(
                 case
                     when orders.order_date >= customer_date_windows.window_start_date
@@ -133,6 +140,30 @@ with
                         then orders.order_id
                 end
             ) as returned_orders_in_window,
+            count(
+                case
+                    when
+                        orders.order_date >= customer_date_windows.window_start_date
+                        and orders.is_state_demo_order = 1
+                        then orders.order_id
+                end
+            ) as state_demo_orders_in_window,
+            count(
+                case
+                    when
+                        orders.order_date >= customer_date_windows.window_start_date
+                        and orders.is_delivered = 1
+                        then orders.order_id
+                end
+            ) as delivered_orders_in_window,
+            count(
+                case
+                    when
+                        orders.order_date >= customer_date_windows.window_start_date
+                        and orders.has_approved_refund = 1
+                        then orders.order_id
+                end
+            ) as refunded_orders_in_window,
             coalesce(
                 sum(
                     case
@@ -142,6 +173,24 @@ with
                 ),
                 0
             ) as revenue_in_window,
+            coalesce(
+                sum(
+                    case
+                        when orders.order_date >= customer_date_windows.window_start_date
+                            then orders.net_amount
+                    end
+                ),
+                0
+            ) as net_revenue_in_window,
+            coalesce(
+                sum(
+                    case
+                        when orders.order_date >= customer_date_windows.window_start_date
+                            then orders.total_refund_amount
+                    end
+                ),
+                0
+            ) as refund_amount_in_window,
             coalesce(
                 sum(
                     case
@@ -192,10 +241,17 @@ with
             datediff(day, most_recent_order_date, as_of_date) as days_since_most_recent_order,
             lifetime_orders_to_date,
             lifetime_revenue_to_date,
+            lifetime_net_revenue_to_date,
+            lifetime_refund_amount_to_date,
             orders_in_window,
             completed_orders_in_window,
             returned_orders_in_window,
+            state_demo_orders_in_window,
+            delivered_orders_in_window,
+            refunded_orders_in_window,
             revenue_in_window,
+            net_revenue_in_window,
+            refund_amount_in_window,
             gift_card_amount_in_window,
             credit_card_amount_in_window,
             orders_in_window > 0 as is_active_in_window,
@@ -224,10 +280,17 @@ select
     days_since_most_recent_order,
     lifetime_orders_to_date,
     lifetime_revenue_to_date,
+    lifetime_net_revenue_to_date,
+    lifetime_refund_amount_to_date,
     orders_in_window,
     completed_orders_in_window,
     returned_orders_in_window,
+    state_demo_orders_in_window,
+    delivered_orders_in_window,
+    refunded_orders_in_window,
     revenue_in_window,
+    net_revenue_in_window,
+    refund_amount_in_window,
     gift_card_amount_in_window,
     credit_card_amount_in_window
 

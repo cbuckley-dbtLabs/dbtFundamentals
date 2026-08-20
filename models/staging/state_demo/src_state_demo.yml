@@ -1,0 +1,60 @@
+version: 2
+
+sources:
+  - name: state_demo
+    description: Demo source tables generated ad hoc in Snowflake to demonstrate dbt state behavior without touching existing raw sources.
+    database: analytics
+    schema: dbt_cbuckley
+    config:
+      freshness:
+        warn_after: {count: 7, period: day}
+        error_after: {count: 30, period: day}
+      loaded_at_field: _loaded_at
+    tables:
+      - name: campaigns
+        identifier: state_demo_campaigns
+        description: Marketing campaign metadata tied to demo order-item attribution.
+        columns:
+          - name: campaign_id
+            data_tests:
+              - unique
+              - not_null
+
+      - name: order_items
+        identifier: state_demo_order_items
+        description: Demo order-line detail keyed back to the existing Jaffle Shop order grain.
+        columns:
+          - name: order_item_id
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            data_tests:
+              - not_null
+
+      - name: shipments
+        identifier: state_demo_shipments
+        description: Demo fulfillment events keyed back to the existing Jaffle Shop order grain.
+        columns:
+          - name: shipment_id
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            data_tests:
+              - not_null
+
+      - name: refunds
+        identifier: state_demo_refunds
+        description: Demo refund events keyed back to existing orders and payments.
+        columns:
+          - name: refund_id
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            data_tests:
+              - not_null
+          - name: payment_id
+            data_tests:
+              - not_null
