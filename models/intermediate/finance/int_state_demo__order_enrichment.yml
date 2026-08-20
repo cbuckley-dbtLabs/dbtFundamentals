@@ -1,0 +1,110 @@
+version: 2
+
+models:
+  - name: int_state_demo__order_enrichment
+    description: >
+      Order-grain enrichment that connects generated state_demo source tables to
+      the main order fact. It aggregates demo item, campaign, shipment, and refund
+      events to one row per order_id before joining into published marts.
+    config:
+      tags: ["state_demo", "intermediate", "finance"]
+      meta:
+        owner: "data"
+        layer: "intermediate"
+        domain: "finance"
+        grain: "one row per state-demo order"
+    columns:
+      - name: order_id
+        description: Foreign key to the existing Jaffle Shop order.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__orders')
+                field: order_id
+      - name: order_item_count
+        description: Number of state-demo order item rows attached to the order.
+        data_tests:
+          - not_null
+      - name: item_quantity
+        description: Total item quantity across state-demo order lines.
+        data_tests:
+          - not_null
+      - name: item_subtotal
+        description: Item subtotal calculated from state-demo order line quantity and unit price.
+        data_tests:
+          - not_null
+      - name: distinct_product_count
+        description: Number of distinct demo product SKUs on the order.
+        data_tests:
+          - not_null
+      - name: campaign_count
+        description: Number of distinct campaigns attributed to the order.
+        data_tests:
+          - not_null
+      - name: primary_campaign_id
+        description: Lowest campaign_id attached to the order, used as a stable campaign representative.
+      - name: campaign_name
+        description: Representative campaign name attached to the order.
+      - name: campaign_channel
+        description: Campaign channel for the order, or multi_channel when multiple channels apply.
+      - name: shipment_count
+        description: Number of demo shipment events attached to the order.
+        data_tests:
+          - not_null
+      - name: latest_shipped_at
+        description: Latest demo shipment date for the order.
+      - name: latest_delivered_at
+        description: Latest demo delivery date for the order.
+      - name: is_shipped
+        description: Flag indicating whether any demo shipment reached shipped or delivered status.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: is_delivered
+        description: Flag indicating whether any demo shipment reached delivered status.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: is_fulfillment_return
+        description: Flag indicating whether any demo shipment reached returned status.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: refund_count
+        description: Number of demo refund events attached to the order.
+        data_tests:
+          - not_null
+      - name: total_refund_amount
+        description: Total demo refund amount for the order across all refund statuses.
+        data_tests:
+          - not_null
+      - name: approved_refund_amount
+        description: Total approved demo refund amount for the order.
+        data_tests:
+          - not_null
+      - name: pending_refund_amount
+        description: Total pending demo refund amount for the order.
+        data_tests:
+          - not_null
+      - name: has_approved_refund
+        description: Flag indicating whether the order has any approved demo refund.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: has_pending_refund
+        description: Flag indicating whether the order has any pending demo refund.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]

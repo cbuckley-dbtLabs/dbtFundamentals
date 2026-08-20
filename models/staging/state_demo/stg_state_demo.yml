@@ -1,0 +1,199 @@
+version: 2
+
+models:
+  - name: stg_state_demo__campaigns
+    description: Staged marketing campaign metadata generated for dbt state demonstrations.
+    config:
+      tags: ["staging", "state_demo", "marketing"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "marketing"
+        grain: "one row per campaign"
+    columns:
+      - name: campaign_id
+        description: Primary key for the campaign.
+        data_tests:
+          - unique
+          - not_null
+      - name: campaign_name
+        description: Human-readable campaign name.
+      - name: channel
+        description: Marketing channel used by the campaign.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - email
+                  - paid_search
+                  - paid_social
+      - name: objective
+        description: Commercial goal for the campaign.
+      - name: budget
+        description: Campaign budget in dollars.
+      - name: status
+        description: Current campaign lifecycle status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - active
+                  - paused
+      - name: loaded_at
+        description: Timestamp when the script loaded the source table.
+      - name: state_demo_run_id
+        description: Deterministic run marker emitted by the generator script.
+
+  - name: stg_state_demo__order_items
+    description: Staged order-line detail generated for dbt state demonstrations.
+    config:
+      tags: ["staging", "state_demo", "fulfillment"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "fulfillment"
+        grain: "one row per order item"
+    columns:
+      - name: order_item_id
+        description: Primary key for the demo order item.
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to `stg_jaffle_shop__orders.order_id`.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__orders')
+                field: order_id
+      - name: line_number
+        description: Line number within the source order.
+      - name: product_sku
+        description: Demo SKU purchased on the order line.
+      - name: product_name
+        description: Demo product name purchased on the order line.
+      - name: quantity
+        description: Quantity of the item purchased.
+      - name: unit_price
+        description: Unit price in dollars.
+      - name: campaign_id
+        description: Optional foreign key to `stg_state_demo__campaigns.campaign_id`.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_state_demo__campaigns')
+                field: campaign_id
+      - name: loaded_at
+        description: Timestamp when the script loaded the source table.
+      - name: state_demo_run_id
+        description: Deterministic run marker emitted by the generator script.
+
+  - name: stg_state_demo__shipments
+    description: Staged fulfillment events generated for dbt state demonstrations.
+    config:
+      tags: ["staging", "state_demo", "fulfillment"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "fulfillment"
+        grain: "one row per shipment"
+    columns:
+      - name: shipment_id
+        description: Primary key for the shipment event.
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to `stg_jaffle_shop__orders.order_id`.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__orders')
+                field: order_id
+      - name: shipping_method
+        description: Fulfillment method for the order.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - standard
+                  - express
+                  - pickup
+      - name: shipment_status
+        description: Current fulfillment status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - processing
+                  - shipped
+                  - delivered
+                  - returned
+      - name: shipped_at
+        description: Date the shipment left fulfillment.
+      - name: delivered_at
+        description: Date the shipment was delivered, when available.
+      - name: loaded_at
+        description: Timestamp when the script loaded the source table.
+      - name: state_demo_run_id
+        description: Deterministic run marker emitted by the generator script.
+
+  - name: stg_state_demo__refunds
+    description: Staged refund events generated for dbt state demonstrations.
+    config:
+      tags: ["staging", "state_demo", "finance"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "finance"
+        grain: "one row per refund"
+    columns:
+      - name: refund_id
+        description: Primary key for the refund event.
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Foreign key to `stg_jaffle_shop__orders.order_id`.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__orders')
+                field: order_id
+      - name: payment_id
+        description: Foreign key to `stg_stripe__payments.payment_id`.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_stripe__payments')
+                field: payment_id
+      - name: refund_amount
+        description: Refunded amount in dollars.
+        data_tests:
+          - not_null
+      - name: refund_reason
+        description: Business reason for the refund.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - customer_return
+                  - payment_error
+      - name: refund_status
+        description: Current refund lifecycle status.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values:
+                  - approved
+                  - pending
+      - name: refunded_at
+        description: Date the refund was created.
+      - name: loaded_at
+        description: Timestamp when the script loaded the source table.
+      - name: state_demo_run_id
+        description: Deterministic run marker emitted by the generator script.

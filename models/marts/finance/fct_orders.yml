@@ -54,6 +54,104 @@ models:
         description: The total monetary value of the order.
       - name: gift_card_amount
         description: The portion of the order amount paid using a gift card.
+      - name: credit_card_amount
+        description: The portion of the order amount paid using a credit card.
+      - name: total_refund_amount
+        description: Total state-demo refund amount attached to the order.
+        data_tests:
+          - not_null
+      - name: approved_refund_amount
+        description: Approved state-demo refund amount attached to the order.
+        data_tests:
+          - not_null
+      - name: pending_refund_amount
+        description: Pending state-demo refund amount attached to the order.
+        data_tests:
+          - not_null
+      - name: net_amount
+        description: Order amount after subtracting state-demo refunds.
+        data_tests:
+          - not_null
+      - name: order_item_count
+        description: Number of state-demo order item rows attached to the order.
+        data_tests:
+          - not_null
+      - name: item_quantity
+        description: Total state-demo item quantity attached to the order.
+        data_tests:
+          - not_null
+      - name: item_subtotal
+        description: State-demo item subtotal calculated from quantity and unit price.
+        data_tests:
+          - not_null
+      - name: distinct_product_count
+        description: Number of distinct state-demo product SKUs attached to the order.
+        data_tests:
+          - not_null
+      - name: campaign_count
+        description: Number of distinct state-demo campaigns attached to the order.
+        data_tests:
+          - not_null
+      - name: primary_campaign_id
+        description: Representative campaign_id for state-demo attribution.
+      - name: campaign_name
+        description: Representative state-demo campaign name.
+      - name: campaign_channel
+        description: State-demo campaign channel, or multi_channel when multiple channels apply.
+      - name: shipment_count
+        description: Number of state-demo shipment events attached to the order.
+        data_tests:
+          - not_null
+      - name: latest_shipped_at
+        description: Latest state-demo shipped date for the order.
+      - name: latest_delivered_at
+        description: Latest state-demo delivered date for the order.
+      - name: is_shipped
+        description: Flag indicating whether any state-demo shipment reached shipped or delivered status.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: is_delivered
+        description: Flag indicating whether any state-demo shipment reached delivered status.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: is_fulfillment_return
+        description: Flag indicating whether any state-demo shipment reached returned status.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: refund_count
+        description: Number of state-demo refund events attached to the order.
+        data_tests:
+          - not_null
+      - name: has_approved_refund
+        description: Flag indicating whether the order has an approved state-demo refund.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: has_pending_refund
+        description: Flag indicating whether the order has a pending state-demo refund.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+      - name: is_state_demo_order
+        description: Flag indicating whether generated state_demo data is attached to the order.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0, 1]
       - name: is_return
         description: Flag indicating whether the order was returned or is pending return (1 = yes, 0 = no).
         data_tests:
@@ -73,6 +171,24 @@ models:
         type: simple
         agg: sum
         expr: gift_card_amount
+      - name: total_net_amount
+        description: The total order amount after state-demo refunds.
+        label: Total Net Order Amount
+        type: simple
+        agg: sum
+        expr: net_amount
+      - name: total_refund_amount
+        description: The total state-demo refund amount.
+        label: Total Refund Amount
+        type: simple
+        agg: sum
+        expr: total_refund_amount
+      - name: state_demo_order_count
+        description: The number of orders with attached state_demo enrichment.
+        label: State Demo Order Count
+        type: simple
+        agg: sum
+        expr: is_state_demo_order
       - name: count_order
         description: The total number of orders placed.
         label: Order Count
@@ -114,6 +230,12 @@ models:
         label: Gift Card Rate
         type: ratio
         numerator: gift_card_amount
+        denominator: total_amount
+      - name: refund_amount_rate
+        description: The share of gross order amount refunded in state_demo data.
+        label: Refund Amount Rate
+        type: ratio
+        numerator: total_refund_amount
         denominator: total_amount
       - name: return_rate
         description: The proportion of orders that were returned or are pending return.
