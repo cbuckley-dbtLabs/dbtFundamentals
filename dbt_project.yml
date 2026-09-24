@@ -43,6 +43,10 @@ models:
     marts:
       +materialized: table
 
+# unit_tests:
+#   dbt_fundamentals:
+#     +compute: local
+
 vars:
   customer_lifecycle_as_of_start_date: '2018-01-01'
   customer_lifecycle_as_of_end_date: current_date

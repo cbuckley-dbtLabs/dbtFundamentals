@@ -1,0 +1,91 @@
+title: "Jaffle Shop overview"
+source: analytics
+
+queries:
+  revenue_by_month:
+    sql: |
+      select date_trunc('month', order_date) as month,
+             sum(amount) as revenue
+      from analytics.dbt_cbuckley_dev.fct_orders
+      group by 1
+      order by 1
+  orders_by_status:
+    sql: |
+      select order_status,
+             count(*) as orders,
+             sum(amount) as revenue
+      from analytics.dbt_cbuckley_dev.fct_orders
+      group by 1
+      order by 3 desc
+  cumulative_revenue:
+    sql: |
+      select month,
+             sum(revenue) over (order by month) as cumulative_revenue
+      from (
+        select date_trunc('month', order_date) as month,
+               sum(amount) as revenue
+        from analytics.dbt_cbuckley_dev.fct_orders
+        group by 1
+      )
+      order by month
+  customers_by_segment:
+    sql: |
+      select customer_segment,
+             count(*) as customers
+      from analytics.dbt_cbuckley_dev.dim_customers
+      group by 1
+  customer_kpis:
+    sql: |
+      select customer_id,
+             first_name,
+             last_name,
+             customer_segment,
+             number_of_orders,
+             lifetime_value,
+             lifetime_net_value
+      from analytics.dbt_cbuckley_dev.dim_customers
+      order by lifetime_value desc
+      limit 25
+
+charts:
+  revenue_trend:
+    type: line
+    query: revenue_by_month
+    x: month
+    y: revenue
+    title: "Revenue by month"
+  orders_by_status:
+    type: bar
+    query: orders_by_status
+    x: order_status
+    y: revenue
+    title: "Revenue by order status"
+  cumulative_revenue:
+    type: area
+    query: cumulative_revenue
+    x: month
+    y: cumulative_revenue
+    title: "Cumulative revenue"
+  customers_by_segment:
+    type: pie
+    query: customers_by_segment
+    theta: customers
+    color: customer_segment
+    title: "Customers by segment"
+  customer_kpis_table:
+    type: table
+    query: customer_kpis
+    title: "Top customers by lifetime value"
+
+rows:
+  - title: "Trends"
+    cols:
+      - revenue_trend
+      - cumulative_revenue
+  - title: "Breakdowns"
+    cols:
+      - orders_by_status
+      - customers_by_segment
+  - title: "Detail"
+    rows:
+      - customer_kpis_table
