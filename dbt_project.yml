@@ -51,3 +51,17 @@ vars:
   customer_lifecycle_as_of_start_date: '2018-01-01'
   customer_lifecycle_as_of_end_date: current_date
   customer_lifecycle_window_days: [7, 14, 30, 60, 90, 180, 365, 730, 1095, 1460, 1825, 2555]
+
+checks:
+  dbt_project_checks:
+    # Popular checks, already on.
+    models_have_descriptions:
+      +enabled: true   # Models that are missing a description.
+    sources_have_descriptions:
+      +enabled: true   # Sources or source tables that are missing a description.
+    models_are_tested:
+      +enabled: true   # Models that have no tests.
+    sources_have_freshness_config:
+      +enabled: true   # Source tables with no freshness warn_after or error_after set.
+    public_models_have_contract:
+      +enabled: true   # Public models with no enforced contract.

@@ -11,8 +11,6 @@ with
 
         select
             first_order_month,
-            date_trunc(month, as_of_date) as as_of_month,
-            datediff(month, first_order_month, date_trunc(month, as_of_date)) as months_since_first_order,
             lookback_window_days,
             lifecycle_state,
             is_active_in_window,
@@ -25,7 +23,9 @@ with
             state_demo_orders_in_window,
             revenue_in_window,
             net_revenue_in_window,
-            refund_amount_in_window
+            refund_amount_in_window,
+            date_trunc(month, as_of_date) as as_of_month,
+            datediff(month, first_order_month, date_trunc(month, as_of_date)) as months_since_first_order
 
         from {{ ref("int_customer_lifecycle_windows") }}
 

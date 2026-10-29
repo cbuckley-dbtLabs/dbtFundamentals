@@ -1,5 +1,6 @@
 title: "Jaffle Shop overview"
 source: analytics
+theme: vivid
 
 queries:
   revenue_by_month:
@@ -54,18 +55,31 @@ charts:
     x: month
     y: revenue
     title: "Revenue by month"
+    style:
+      axis_y:
+        labels:
+          format: currency_whole
   orders_by_status:
     type: bar
     query: orders_by_status
     x: order_status
     y: revenue
+    color: order_status
     title: "Revenue by order status"
+    style:
+      axis_y:
+        labels:
+          format: currency_whole
   cumulative_revenue:
     type: area
     query: cumulative_revenue
     x: month
     y: cumulative_revenue
     title: "Cumulative revenue"
+    style:
+      axis_y:
+        labels:
+          format: currency_whole
   customers_by_segment:
     type: pie
     query: customers_by_segment
@@ -76,6 +90,16 @@ charts:
     type: table
     query: customer_kpis
     title: "Top customers by lifetime value"
+    style:
+      columns:
+        number_of_orders:
+          format: integer
+        lifetime_value:
+          format: currency_whole
+          align: right
+        lifetime_net_value:
+          format: currency_whole
+          align: right
 
 rows:
   - title: "Trends"

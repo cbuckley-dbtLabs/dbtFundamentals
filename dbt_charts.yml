@@ -1,5 +1,5 @@
 sources:
   analytics:
     type: dbt_profile
-    profile: default
+    profile: charts
     target: dev
