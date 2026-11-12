@@ -51,10 +51,9 @@ vars:
   customer_lifecycle_as_of_start_date: '2018-01-01'
   customer_lifecycle_as_of_end_date: current_date
   customer_lifecycle_window_days: [7, 14, 30, 60, 90, 180, 365, 730, 1095, 1460, 1825, 2555]
-<<<<<<< HEAD
+
 flags:
   require_generic_test_arguments_property: true
-=======
 
 checks:
   dbt_project_checks:
@@ -69,4 +68,3 @@ checks:
       +enabled: true   # Source tables with no freshness warn_after or error_after set.
     public_models_have_contract:
       +enabled: true   # Public models with no enforced contract.
->>>>>>> 398de4e06ae86a68cbc816222e0f34bb952c2593
