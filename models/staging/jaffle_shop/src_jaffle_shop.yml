@@ -18,6 +18,71 @@ sources:
             data_tests:
               - unique
               - not_null
+
+      - name: stores
+        description: Jaffle Shop retail locations, one row per store.
+        columns:
+          - name: id
+            description: Unique identifier for the store (UUID).
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Store location name (city).
+          - name: opened_at
+            description: Timestamp when the store opened.
+          - name: tax_rate
+            description: Sales tax rate applied at this store.
+
+      - name: items
+        description: Jaffle Shop order line items, one row per item in an order.
+        columns:
+          - name: id
+            description: Unique identifier for the order item (UUID).
+            data_tests:
+              - unique
+              - not_null
+          - name: order_id
+            description: Identifier of the parent order (UUID). Note this does not join to the orders table, which uses numeric ids.
+          - name: sku
+            description: SKU of the product purchased.
+
+      - name: products
+        description: Jaffle Shop product catalog, one row per product.
+        columns:
+          - name: sku
+            description: Unique product SKU.
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Product display name.
+          - name: type
+            description: Product category (e.g. jaffle, beverage).
+          - name: price
+            description: Product price in cents.
+          - name: description
+            description: Product description.
+
+      - name: supplies
+        description: Jaffle Shop supplies/ingredients mapped to products, one row per supply.
+        columns:
+          - name: id
+            description: Unique identifier for the supply.
+            data_tests:
+              - unique
+              - not_null
+          - name: name
+            description: Supply item name.
+          - name: cost
+            description: Supply cost in cents.
+          - name: perishable
+            description: Whether the supply is perishable.
+          - name: sku
+            description: SKU of the product this supply is used for.
+
+
+
         # config:
         #   freshness:
         #     warn_after: {count: 90, period: day}

@@ -1,0 +1,63 @@
+models:
+  - name: fct_customer_monthly_value
+    description: >
+      Customer monthly value fact table with one row per customer and calendar
+      month in which the customer placed an order. Gross value is successful
+      payment revenue before refunds; net value subtracts attached refunds.
+    config:
+      tags: ["mart", "marketing", "customer_value"]
+      meta:
+        owner: "data"
+        layer: "mart"
+        domain: "marketing"
+        grain: "one row per customer and order month"
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - customer_id
+              - order_month
+    columns:
+      - name: customer_id
+        description: The unique identifier for the customer who placed orders in the month.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+
+      - name: order_month
+        description: The first day of the calendar month containing the customer's orders.
+        data_tests:
+          - not_null
+
+      - name: total_orders
+        description: Total orders placed by the customer in the calendar month.
+        data_tests:
+          - not_null
+
+      - name: successful_paid_orders
+        description: Orders with positive payment value in the calendar month.
+        data_tests:
+          - not_null
+
+      - name: gross_value
+        description: Total payment revenue attributed to the customer before refunds in the calendar month.
+        data_tests:
+          - not_null
+
+      - name: net_value
+        description: Total customer payment revenue after attached refunds in the calendar month.
+        data_tests:
+          - not_null
+
+      - name: refund_amount
+        description: Total attached refunds attributed to the customer in the calendar month.
+        data_tests:
+          - not_null
+
+      - name: average_order_value
+        description: Average gross value per successful paid order in the calendar month, or zero when no paid orders exist.
+        data_tests:
+          - not_null

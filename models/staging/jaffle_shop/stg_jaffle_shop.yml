@@ -59,3 +59,108 @@ models:
         description: Date the order was created in the source application.
         data_tests:
           - not_null
+
+  - name: stg_jaffle_shop__stores
+    description: Staged store locations from the jaffle shop application, one row per store.
+    config:
+      tags: ["staging", "jaffle_shop", "core"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "core"
+        grain: "one row per store"
+    columns:
+      - name: store_id
+        description: Primary key for stores (UUID).
+        data_tests:
+          - unique
+          - not_null
+      - name: store_name
+        description: Store location name (city).
+      - name: opened_at
+        description: Timestamp when the store opened.
+      - name: tax_rate
+        description: Sales tax rate applied at this store.
+
+  - name: stg_jaffle_shop__items
+    description: Staged order line items from the jaffle shop application, one row per item. The source order_id is a UUID and does not join to the numeric order_id in stg_jaffle_shop__orders.
+    config:
+      tags: ["staging", "jaffle_shop", "core"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "core"
+        grain: "one row per order item"
+    columns:
+      - name: order_item_id
+        description: Primary key for order items (UUID).
+        data_tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: Identifier of the parent order (UUID). Does not join to stg_jaffle_shop__orders, which uses numeric ids.
+      - name: sku
+        description: SKU of the product purchased.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__products')
+                field: sku
+
+  - name: stg_jaffle_shop__products
+    description: Staged product catalog from the jaffle shop application, one row per product.
+    config:
+      tags: ["staging", "jaffle_shop", "core"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "core"
+        grain: "one row per product"
+    columns:
+      - name: sku
+        description: Primary key for products (SKU).
+        data_tests:
+          - unique
+          - not_null
+      - name: product_name
+        description: Product display name.
+      - name: product_type
+        description: Product category (e.g. jaffle, beverage).
+      - name: price
+        description: Product price in cents.
+      - name: description
+        description: Product description.
+
+  - name: stg_jaffle_shop__supplies
+    description: Staged supplies/ingredients from the jaffle shop application, one row per supply per product it is used for.
+    config:
+      tags: ["staging", "jaffle_shop", "core"]
+      meta:
+        owner: "data"
+        layer: "staging"
+        domain: "core"
+        grain: "one row per supply and product"
+    columns:
+      - name: supply_product_key
+        description: Primary key for the supply × product grain, a concatenation of supply_id and sku.
+        data_tests:
+          - unique
+          - not_null
+      - name: supply_id
+        description: Identifier for the supply. Not unique on its own — the same supply is used for multiple products.
+        data_tests:
+          - not_null
+      - name: supply_name
+        description: Supply item name.
+      - name: cost
+        description: Supply cost in cents.
+      - name: perishable
+        description: Whether the supply is perishable.
+      - name: sku
+        description: SKU of the product this supply is used for.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_jaffle_shop__products')
+                field: sku
