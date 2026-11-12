@@ -52,6 +52,9 @@ vars:
   customer_lifecycle_as_of_end_date: current_date
   customer_lifecycle_window_days: [7, 14, 30, 60, 90, 180, 365, 730, 1095, 1460, 1825, 2555]
 
+flags:
+  require_generic_test_arguments_property: true
+
 checks:
   dbt_project_checks:
     # Popular checks, already on.

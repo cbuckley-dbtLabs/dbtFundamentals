@@ -76,3 +76,72 @@ models:
               when lifetime_value >= 75 then 'Mid Value'
               else 'Low Value'
             end
+    metrics:
+      - name: count_customers
+        description: The total number of customers in the filtered slice.
+        label: Customer Count
+        type: simple
+        agg: count_distinct
+        expr: customer_id
+      - name: count_loyal_customers
+        description: The number of customers in the Loyal behavioural segment.
+        label: Loyal Customer Count
+        type: simple
+        agg: count_distinct
+        expr: customer_id
+        filter: |
+          {{ Dimension('customer__customer_segment') }} = 'Loyal'
+      - name: total_customer_lifetime_value
+        description: The total lifetime revenue across all customers.
+        label: Total Customer Lifetime Value
+        type: simple
+        agg: sum
+        expr: lifetime_value
+      - name: total_customer_net_value
+        description: The total lifetime customer revenue after state-demo refunds.
+        label: Total Customer Net Value
+        type: simple
+        agg: sum
+        expr: lifetime_net_value
+      - name: total_customer_refund_amount
+        description: The total state-demo refund amount attributed to customers.
+        label: Total Customer Refund Amount
+        type: simple
+        agg: sum
+        expr: lifetime_refund_amount
+      - name: total_customer_orders
+        description: The total number of orders placed across all customers.
+        label: Total Customer Orders
+        type: simple
+        agg: sum
+        expr: number_of_orders
+      - name: avg_customer_lifetime_value
+        description: The average lifetime revenue per customer.
+        label: Average Customer Lifetime Value
+        type: simple
+        agg: average
+        expr: lifetime_value
+      - name: avg_orders_per_customer
+        description: The average number of orders per customer.
+        label: Average Orders per Customer
+        type: simple
+        agg: average
+        expr: number_of_orders
+      - name: avg_days_since_last_order
+        description: The average recency of customers' most recent orders. Higher values indicate churn risk.
+        label: Average Days Since Last Order
+        type: simple
+        agg: average
+        expr: days_since_last_order
+      - name: customer_refund_rate
+        description: The share of customer lifetime value refunded in state_demo data.
+        label: Customer Refund Rate
+        type: ratio
+        numerator: total_customer_refund_amount
+        denominator: total_customer_lifetime_value
+      - name: loyal_customer_share
+        description: The proportion of customers in the Loyal behavioural segment.
+        label: Loyal Customer Share
+        type: ratio
+        numerator: count_loyal_customers
+        denominator: count_customers

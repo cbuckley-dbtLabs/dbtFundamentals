@@ -1,0 +1,34 @@
+metrics:
+  - name: ordering_customer_rate
+    description: The share of all customers who have placed at least one order.
+    label: Ordering Customer Rate
+    type: ratio
+    numerator: count_ordering_customer
+    denominator: count_customers
+    config:
+      group: marketing
+      meta:
+        owner: "data"
+        domain: "marketing"
+  - name: orders_per_all_customers
+    description: The average number of orders across the entire customer base, including customers with no orders.
+    label: Orders per Customer (All Customers)
+    type: ratio
+    numerator: count_order
+    denominator: count_customers
+    config:
+      group: marketing
+      meta:
+        owner: "data"
+        domain: "marketing"
+  - name: ltv_to_order_revenue_ratio
+    description: Customer-level lifetime value as a ratio of order-level revenue. Should be close to 1; divergence signals grain mismatches between the two models.
+    label: Customer LTV vs Order Revenue
+    type: ratio
+    numerator: total_customer_lifetime_value
+    denominator: total_amount
+    config:
+      group: marketing
+      meta:
+        owner: "data"
+        domain: "marketing"

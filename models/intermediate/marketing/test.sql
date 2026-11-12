@@ -43,3 +43,4 @@ with
 
 select *
 from order_history
+limit 5
