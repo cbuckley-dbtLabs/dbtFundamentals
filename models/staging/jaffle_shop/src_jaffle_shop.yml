@@ -65,13 +65,19 @@ sources:
             description: Product description.
 
       - name: supplies
-        description: Jaffle Shop supplies/ingredients mapped to products, one row per supply.
+        description: Jaffle Shop supplies/ingredients mapped to products, one row per supply per product it is used for.
+        data_tests:
+          - dbt_utils.unique_combination_of_columns:
+              arguments:
+                combination_of_columns:
+                  - id
+                  - sku
         columns:
           - name: id
-            description: Unique identifier for the supply.
+            description: Identifier for the supply. The same supply can be used for multiple products.
             data_tests:
-              - unique
               - not_null
+
           - name: name
             description: Supply item name.
           - name: cost
