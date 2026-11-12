@@ -39,6 +39,7 @@ models:
                 values:
                   - active
                   - paused
+                  - ended
       - name: loaded_at
         description: Timestamp when the script loaded the source table.
       - name: state_demo_run_id
@@ -129,6 +130,7 @@ models:
                 values:
                   - processing
                   - shipped
+                  - in_transit
                   - delivered
                   - returned
       - name: shipped_at
@@ -183,6 +185,7 @@ models:
                 values:
                   - customer_return
                   - payment_error
+                  - duplicate_charge
       - name: refund_status
         description: Current refund lifecycle status.
         data_tests:
@@ -191,6 +194,7 @@ models:
                 values:
                   - approved
                   - pending
+                  - denied
       - name: refunded_at
         description: Date the refund was created.
       - name: loaded_at

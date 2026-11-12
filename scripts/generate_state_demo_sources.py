@@ -9,6 +9,7 @@ Snowflake connection details or secrets.
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 import re
@@ -30,9 +31,7 @@ ENV_VAR_PATTERN = re.compile(
 )
 
 
-def env_var_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> str:
-    value = loader.construct_scalar(node)
-
+def expand_env_vars(value: str) -> str:
     def replace_env_var(match: re.Match[str]) -> str:
         name = match.group(1)
         default = match.group(2)
@@ -42,6 +41,20 @@ def env_var_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> str:
         return resolved_value
 
     return ENV_VAR_PATTERN.sub(replace_env_var, value)
+
+
+def env_var_constructor(loader: yaml.SafeLoader, node: yaml.Node) -> str:
+    return expand_env_vars(loader.construct_scalar(node))
+
+
+def resolve_env_vars(value: Any) -> Any:
+    if isinstance(value, str):
+        return expand_env_vars(value)
+    if isinstance(value, dict):
+        return {key: resolve_env_vars(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [resolve_env_vars(item) for item in value]
+    return value
 
 
 yaml.SafeLoader.add_implicit_resolver("!env_var", ENV_VAR_PATTERN, None)
@@ -61,7 +74,7 @@ def load_profile(profile_name: str, target_override: str | None) -> tuple[str, d
         raise FileNotFoundError(f"No dbt profile found at {path}")
 
     with path.open(encoding="utf-8") as profile_file:
-        profiles = yaml.safe_load(profile_file)
+        profiles = resolve_env_vars(yaml.safe_load(profile_file))
 
     if profile_name not in profiles:
         raise KeyError(f"Profile {profile_name!r} was not found in {path}")
@@ -78,7 +91,28 @@ def load_profile(profile_name: str, target_override: str | None) -> tuple[str, d
     if target_name not in outputs:
         raise KeyError(f"Target {target_name!r} was not found in profile {profile_name!r}")
 
-    return target_name, outputs[target_name]
+    return target_name, normalize_output(outputs[target_name], target_name, profile_name)
+
+
+def normalize_output(
+    output: Any, target_name: str, profile_name: str
+) -> dict[str, Any]:
+    if isinstance(output, dict):
+        return output
+
+    if not isinstance(output, list):
+        raise ValueError(f"Target {target_name!r} in profile {profile_name!r} is invalid")
+
+    snowflake_entries = [entry for entry in output if entry.get("type") == "snowflake"]
+    default_entries = [entry for entry in snowflake_entries if entry.get("default") is True]
+    selected_entries = default_entries or snowflake_entries
+    if len(selected_entries) != 1:
+        raise ValueError(
+            f"Target {target_name!r} in profile {profile_name!r} must have exactly one "
+            "Snowflake connection entry (mark the intended one with default: true)"
+        )
+
+    return selected_entries[0]
 
 
 def q(identifier: str) -> str:
@@ -139,6 +173,7 @@ def snowflake_connection_kwargs(profile: dict[str, Any]) -> dict[str, Any]:
         "authenticator",
         "token",
         "private_key",
+        "private_key_passphrase",
     )
     connection_kwargs = {
         key: profile[key]
@@ -147,6 +182,15 @@ def snowflake_connection_kwargs(profile: dict[str, Any]) -> dict[str, Any]:
     }
     connection_kwargs["database"] = DATABASE
     connection_kwargs["schema"] = SCHEMA
+    private_key = connection_kwargs.get("private_key")
+    if isinstance(private_key, str):
+        if "-----BEGIN" in private_key:
+            connection_kwargs["private_key"] = private_key.encode("utf-8")
+        else:
+            connection_kwargs["private_key"] = base64.b64decode(private_key)
+    private_key_passphrase = connection_kwargs.get("private_key_passphrase")
+    if isinstance(private_key_passphrase, str):
+        connection_kwargs["private_key_passphrase"] = private_key_passphrase.encode("utf-8")
     return connection_kwargs
 
 
@@ -176,6 +220,12 @@ def demo_tables(run_id: str, loaded_at: datetime) -> list[dict[str, Any]]:
         (2, "Weekend Waffles", "paid_search", "acquisition", Decimal("2100.00"), "active", loaded_at, run_id),
         (3, "Gift Card Push", "paid_social", "revenue", Decimal("975.50"), "paused", loaded_at, run_id),
         (4, "Loyalty Launch", "email", "loyalty", Decimal("1500.00"), "active", loaded_at, run_id),
+        (5, "Brunch Bundle", "email", "revenue", Decimal("800.00"), "active", loaded_at, run_id),
+        (6, "Cold Brew Season", "paid_social", "acquisition", Decimal("1800.00"), "active", loaded_at, run_id),
+        (7, "Waffle Fest", "paid_search", "acquisition", Decimal("2400.00"), "ended", loaded_at, run_id),
+        (8, "Student Discount", "email", "acquisition", Decimal("650.00"), "paused", loaded_at, run_id),
+        (9, "Family Pack Promo", "paid_social", "revenue", Decimal("1150.00"), "active", loaded_at, run_id),
+        (10, "Referral Rewards", "email", "retention", Decimal("1350.00"), "active", loaded_at, run_id),
     ]
 
     order_items = [
@@ -186,6 +236,9 @@ def demo_tables(run_id: str, loaded_at: datetime) -> list[dict[str, Any]]:
         (105, 4, 1, "vegan_waffle", "Vegan Waffle", 2, Decimal("13.25"), 4, loaded_at, run_id),
         (106, 5, 1, "latte", "Latte", 2, Decimal("5.50"), 2, loaded_at, run_id),
         (107, 6, 1, "seasonal_waffle", "Seasonal Waffle", 1, Decimal("16.00"), 4, loaded_at, run_id),
+        (108, 6, 2, "iced_coffee", "Iced Coffee", 1, Decimal("4.25"), 4, loaded_at, run_id),
+        (109, 7, 1, "family_pack", "Family Pack", 1, Decimal("45.00"), 7, loaded_at, run_id),
+        (110, 8, 1, "student_combo", "Student Combo", 1, Decimal("9.75"), 8, loaded_at, run_id),
     ]
 
     shipments = [
@@ -194,11 +247,24 @@ def demo_tables(run_id: str, loaded_at: datetime) -> list[dict[str, Any]]:
         (1003, 3, "standard", "returned", "2026-08-15", "2026-08-18", loaded_at, run_id),
         (1004, 4, "standard", "processing", "2026-08-16", None, loaded_at, run_id),
         (1005, 6, "pickup", "delivered", "2026-08-17", "2026-08-17", loaded_at, run_id),
+        (1006, 7, "express", "delivered", "2026-08-17", "2026-08-18", loaded_at, run_id),
+        (1007, 8, "standard", "in_transit", "2026-08-18", None, loaded_at, run_id),
+        (1008, 9, "pickup", "delivered", "2026-08-18", "2026-08-18", loaded_at, run_id),
+        (1009, 10, "express", "processing", "2026-08-19", None, loaded_at, run_id),
+        (1010, 3, "standard", "returned", "2026-08-19", "2026-08-22", loaded_at, run_id),
     ]
 
     refunds = [
         (5001, 3, 3, Decimal("25.00"), "customer_return", "approved", "2026-08-18", loaded_at, run_id),
         (5002, 5, 5, Decimal("5.50"), "payment_error", "pending", "2026-08-19", loaded_at, run_id),
+        (5003, 6, 6, Decimal("16.00"), "customer_return", "approved", "2026-08-20", loaded_at, run_id),
+        (5004, 7, 7, Decimal("4.25"), "duplicate_charge", "approved", "2026-08-20", loaded_at, run_id),
+        (5005, 8, 8, Decimal("9.75"), "customer_return", "denied", "2026-08-21", loaded_at, run_id),
+        (5006, 9, 9, Decimal("13.25"), "payment_error", "pending", "2026-08-21", loaded_at, run_id),
+        (5007, 10, 10, Decimal("45.00"), "customer_return", "approved", "2026-08-22", loaded_at, run_id),
+        (5008, 11, 11, Decimal("12.00"), "duplicate_charge", "approved", "2026-08-22", loaded_at, run_id),
+        (5009, 12, 12, Decimal("3.50"), "customer_return", "denied", "2026-08-23", loaded_at, run_id),
+        (5010, 13, 13, Decimal("14.00"), "payment_error", "approved", "2026-08-23", loaded_at, run_id),
     ]
 
     return [

@@ -1,3 +1,11 @@
+{{
+    config(
+        state={
+            "require_fresh_data_from": "any",
+        }
+    )
+}}
+
 with
     orders as (
         select order_id, customer_id, order_date, status
@@ -40,6 +48,11 @@ select
     orders.customer_id,
     orders.order_date,
     orders.status as order_status,
+    state_demo_order_enrichment.primary_campaign_id,
+    state_demo_order_enrichment.campaign_name,
+    state_demo_order_enrichment.campaign_channel,
+    state_demo_order_enrichment.latest_shipped_at,
+    state_demo_order_enrichment.latest_delivered_at,
     coalesce(order_payments.total_amount, 0) as amount,
     coalesce(order_payments.gift_card_amount, 0) as gift_card_amount,
     coalesce(order_payments.credit_card_amount, 0) as credit_card_amount,
@@ -59,12 +72,7 @@ select
         state_demo_order_enrichment.distinct_product_count, 0
     ) as distinct_product_count,
     coalesce(state_demo_order_enrichment.campaign_count, 0) as campaign_count,
-    state_demo_order_enrichment.primary_campaign_id,
-    state_demo_order_enrichment.campaign_name,
-    state_demo_order_enrichment.campaign_channel,
     coalesce(state_demo_order_enrichment.shipment_count, 0) as shipment_count,
-    state_demo_order_enrichment.latest_shipped_at,
-    state_demo_order_enrichment.latest_delivered_at,
     coalesce(state_demo_order_enrichment.is_shipped, 0) as is_shipped,
     coalesce(state_demo_order_enrichment.is_delivered, 0) as is_delivered,
     coalesce(

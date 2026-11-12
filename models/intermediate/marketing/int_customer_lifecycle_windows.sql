@@ -14,12 +14,12 @@ with
     date_bounds as (
 
         select
-            to_date('{{ as_of_start_date }}') as start_date,
             {% if as_of_end_date | lower in ["current_date", "current_date()"] %}
                 current_date
             {% else %}
                 to_date('{{ as_of_end_date }}')
-            {% endif %} as end_date
+            {% endif %} as end_date,
+            to_date('{{ as_of_start_date }}') as start_date
 
     ),
 
@@ -88,10 +88,10 @@ with
         select
             customers.customer_id,
             customers.first_order_date,
-            date_trunc(month, customers.first_order_date) as first_order_month,
             customers.customer_segment,
             as_of_dates.as_of_date,
             lifecycle_windows.lookback_window_days,
+            date_trunc(month, customers.first_order_date) as first_order_month,
             dateadd(
                 day, 1 - lifecycle_windows.lookback_window_days, as_of_dates.as_of_date
             ) as window_start_date
@@ -214,7 +214,7 @@ with
 
         left join orders
             on customer_date_windows.customer_id = orders.customer_id
-            and orders.order_date <= customer_date_windows.as_of_date
+            and customer_date_windows.as_of_date >= orders.order_date
 
         group by
             customer_date_windows.customer_id,
@@ -238,7 +238,6 @@ with
             first_order_month,
             customer_segment,
             most_recent_order_date,
-            datediff(day, most_recent_order_date, as_of_date) as days_since_most_recent_order,
             lifetime_orders_to_date,
             lifetime_revenue_to_date,
             lifetime_net_revenue_to_date,
@@ -254,6 +253,7 @@ with
             refund_amount_in_window,
             gift_card_amount_in_window,
             credit_card_amount_in_window,
+            datediff(day, most_recent_order_date, as_of_date) as days_since_most_recent_order,
             orders_in_window > 0 as is_active_in_window,
             case
                 when lifetime_orders_to_date = 0 then 'No Orders Yet'
